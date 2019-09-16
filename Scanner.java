@@ -25,7 +25,7 @@ public class Scanner
     public Token extractToken( StringBuilder stream )
     {
         char aChar = stream.charAt( 0 );
-        String aValue = "";
+        String aValue;
         while ( stream.length() != 0 )
         {
             aChar = stream.charAt( 0 );
@@ -136,7 +136,7 @@ public class Scanner
             {
                 if ( nextToken.tokenType == TokenType.INVALID )
                 {
-                    System.out.println( "INVALID" );
+                    System.out.println( "INVALID TOKEN: " + nextToken.tokenVal );
                     break;
                 }
                 result.append( nextToken.toString() );
