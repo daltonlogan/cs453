@@ -18,80 +18,130 @@ public class Scanner
 
         public String toString( )
         {
-            return this.tokenType + ": " + this.tokenVal + " ";
+            return "|" + this.tokenType + ": " + this.tokenVal + "|";
         }
     }
 
     public Token extractToken( StringBuilder stream )
     {
         char aChar = stream.charAt( 0 );
+        String aValue = "";
+        while ( stream.length() != 0 )
+        {
+            aChar = stream.charAt( 0 );
+            if ( Character.isWhitespace( aChar ) )
+            {
+                stream.deleteCharAt( 0 );
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if ( stream.length() == 0 )
+        {
+            return null;
+        }
+
         TokenType aType;
 
         if ( Character.isDigit( aChar ) )
         {
+            StringBuilder a = new StringBuilder();
+            while ( stream.length() != 0 )
+            {
+                aChar = stream.charAt( 0 );
+                if ( Character.isDigit( aChar ) )
+                {
+                    a.append( aChar );
+                    stream.deleteCharAt( 0 );
+                }
+                else
+                {
+                    break;
+                }
+            }
+            aValue = a.toString();
             aType = TokenType.NUM;
         }
         else if ( aChar == '+' )
         {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
             aType = TokenType.PLUS;
         }
         else if ( aChar == '-' )
         {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
             aType = TokenType.MINUS;
         }
         else if ( aChar == '*' )
         {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
             aType = TokenType.MUL;
         }
         else if ( aChar == '/' )
         {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
             aType = TokenType.DIV;
         }
         else if ( aChar == '<' )
         {
-            if ( stream.charAt( 1 ) == '=' )
+            aValue = String.valueOf( aChar );
+            stream.deleteCharAt( 0 );
+            aType = TokenType.LT;
+
+            if ( stream.length() != 0 && stream.charAt( 0 ) == '=' )
             {
+                stream.deleteCharAt( 0 );
+                aValue += '=';
                 aType = TokenType.LTE;
-            }
-            else
-            {
-                aType = TokenType.LT;
             }
         }
         else if ( aChar == '>' )
         {
-            if ( stream.charAt( 1 ) == '=' )
+            aValue = String.valueOf( aChar );
+            stream.deleteCharAt( 0 );
+            aType = TokenType.GT;
+
+            if ( stream.length() != 0 && stream.charAt( 0 ) == '=' )
             {
+                stream.deleteCharAt( 0 );
+                aValue += '=';
                 aType = TokenType.GTE;
-            }
-            else
-            {
-                aType = TokenType.GT;
             }
         }
         else
         {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
             aType = TokenType.INVALID;
         }
 
-        String aValue = String.valueOf( aChar );
-        Token aToken = new Token( aType, aValue );
-        return aToken;
+        return new Token( aType, aValue );
     }
 
     public String extractTokens( String arg )
     {
-    /* TODO #1: Finish this function to iterate over all tokens in the input string.
-
-       Pseudo code:
-       String extractTokens(String arg):
-         String result= “”;
-         while(arg is not empty)
-            Token nextToken = extractToken(arg)
-            result += nextToken.toString()
-         return result
-    */
-        return null;
+        StringBuilder currentString = new StringBuilder( arg );
+        StringBuilder result = new StringBuilder();
+        while ( currentString.length() != 0 )
+        {
+            Token nextToken = extractToken( currentString );
+            if ( nextToken != null )
+            {
+                if ( nextToken.tokenType == TokenType.INVALID )
+                {
+                    System.out.println( "INVALID" );
+                    break;
+                }
+                result.append( nextToken.toString() );
+            }
+        }
+        return result.toString();
     }
-
 }
