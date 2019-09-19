@@ -2,7 +2,7 @@ public class Scanner
 {
     enum TokenType
     {
-        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, INVALID
+        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, INVALID
     }
 
     class Token
@@ -114,6 +114,18 @@ public class Scanner
                 aValue += '=';
                 aType = TokenType.GTE;
             }
+        }
+        else if( aChar == '(' )
+        {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
+            aType = TokenType.LEFTPAREN;
+        }
+        else if( aChar == ')' )
+        {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
+            aType = TokenType.RIGHTPAREN;
         }
         else
         {

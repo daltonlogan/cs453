@@ -100,6 +100,14 @@ public class ScannerTest
 
         System.out.println();
 
+        System.out.println( "Starting test 7" );
+        result = test.extractTokens( "55 + 2 - ( 2 )" );
+        expected = "|NUM: 55||PLUS: +||NUM: 2||MINUS: -||LEFTPAREN: (||NUM: 2||RIGHTPAREN: )|";
+        if ( ( !result.equals( expected ) ) ) throw new AssertionError();
+        System.out.println( "Passed test 7" );
+
+        System.out.println();
+
         System.out.println( "*******************************************" );
         System.out.println( "Passed All Tests" );
         System.out.println( "*******************************************" );
