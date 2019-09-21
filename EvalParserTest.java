@@ -57,6 +57,27 @@ public class EvalParserTest{
 
     System.out.println();
 
+    System.out.println( "Starting test 4" );
+    eval = "(2*5+4) - (3 + 5 )";
+    if ((parser.evaluateExpression(eval) != 6)) throw new AssertionError();
+    System.out.println( "Passed test 4" );
+
+    System.out.println();
+
+    System.out.println( "Starting test 5" );
+    eval = "2 * 2 + 3 * 3";
+    if ((parser.evaluateExpression(eval) != 13)) throw new AssertionError();
+    System.out.println( "Passed test 5" );
+
+    System.out.println();
+
+    System.out.println( "Starting test 6" );
+    eval = "5 - 3 * 4 / 2";
+    if ((parser.evaluateExpression(eval) != -1)) throw new AssertionError();
+    System.out.println( "Passed test 6" );
+
+    System.out.println();
+
     System.out.println( "*******************************************" );
     System.out.println( "Passed All Tests" );
     System.out.println( "*******************************************" );

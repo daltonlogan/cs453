@@ -115,13 +115,13 @@ public class Scanner
                 aType = TokenType.GTE;
             }
         }
-        else if( aChar == '(' )
+        else if ( aChar == '(' )
         {
             stream.deleteCharAt( 0 );
             aValue = String.valueOf( aChar );
             aType = TokenType.LEFTPAREN;
         }
-        else if( aChar == ')' )
+        else if ( aChar == ')' )
         {
             stream.deleteCharAt( 0 );
             aValue = String.valueOf( aChar );
