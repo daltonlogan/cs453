@@ -119,14 +119,46 @@ public class EvalParserTest{
     
     System.out.println("Starting Test 3");
     eval = "1+2+3";
-    result = "temp0 = 1\n"+
-    		"temp1 = 2\n"+
-    		"temp2 = 3\n"+
-    		"temp3 = temp1 + temp2\n"+
-    		"temp4 = temp0 + temp3\n";
-    //if (!parser.getThreeAddr(eval).equals(result)) throw new AssertionError();
-    System.out.println(parser.getThreeAddr(eval));
+    result = "temp0 = 1\n"
+    		+ "temp1 = 2\n"
+    		+ "temp2 = temp0 + temp1\n"
+    		+ "temp3 = 3\n"
+    		+ "temp4 = temp2 + temp3\n";
+    if (!parser.getThreeAddr(eval).equals(result)) throw new AssertionError();
+    //System.out.println(parser.getThreeAddr(eval));
     System.out.println("Passed Test 3");
+    
+    System.out.println();
+    
+    System.out.println("Starting Test 4");
+    eval = "1*2+3*4";
+    result = "temp0 = 1\n"
+    		+ "temp1 = 2\n"
+    		+ "temp2 = temp0 * temp1\n"
+    		+ "temp3 = 3\n"
+    		+ "temp4 = 4\n"
+    		+ "temp5 = temp3 * temp4\n"
+    		+ "temp6 = temp2 + temp5\n";
+    //System.out.println(parser.getThreeAddr(eval));
+    if (!parser.getThreeAddr(eval).equals(result)) throw new AssertionError();
+    System.out.println("Passed Test 4");
+    
+    System.out.println();
+    
+    System.out.println("Starting Test 5");
+    eval = "(1+2)-(3*4)/5";
+    result = "temp0 = 1\n"
+    		+ "temp1 = 2\n"
+    		+ "temp2 = temp0 + temp1\n"
+    		+ "temp3 = 3\n"
+    		+ "temp4 = 4\n"
+    		+ "temp5 = temp3 * temp4\n"
+    		+ "temp6 = 5\n"
+    		+ "temp7 = temp5 / temp6\n"
+    		+ "temp8 = temp2 - temp7\n";
+    //System.out.println(parser.getThreeAddr(eval));
+    if (!parser.getThreeAddr(eval).equals(result)) throw new AssertionError();
+    System.out.println("Passed Test 5");
     
     System.out.println();
 
