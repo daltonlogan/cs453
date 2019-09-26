@@ -162,6 +162,32 @@ public class EvalParserTest{
     
     System.out.println();
 
+    System.out.println("Starting Test 6");
+    eval = "1 + 2 * 4";
+    result = "temp0 = 1\n"
+            + "temp1 = 2\n"
+            + "temp2 = 4\n"
+            + "temp3 = temp1 * temp2\n"
+            + "temp4 = temp0 + temp3\n";
+    if (!parser.getThreeAddr(eval).equals(result)) throw new AssertionError();
+    System.out.println("Passed Test 6");
+
+    System.out.println();
+
+    System.out.println("Starting Test 7");
+    eval = "3 * 3 + 2 * 2";
+    result = "temp0 = 3\n"
+            + "temp1 = 3\n"
+            + "temp2 = temp0 * temp1\n"
+            + "temp3 = 2\n"
+            + "temp4 = 2\n"
+            + "temp5 = temp3 * temp4\n"
+            + "temp6 = temp2 + temp5\n";
+    if (!parser.getThreeAddr(eval).equals(result)) throw new AssertionError();
+    System.out.println("Passed Test 7");
+
+    System.out.println();
+
     System.out.println("Congrats: three address generation tests passed! Now make your own test cases "+
                        "(this is only a subset of what we will test your code on)");
     System.out.println("*******************************************");
