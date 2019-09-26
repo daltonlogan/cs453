@@ -11,11 +11,6 @@ public class EvalParser
     String threeAddressResult = "";
     ArrayList<Integer> IDs = new ArrayList<Integer>();
 
-    /***************** Three Address Translator ***********************/
-    // TODO #2 Continued: Write the functions for E/E', T/T', and F. Return the temporary ID associated with each subexpression and
-    //                    build the threeAddressResult string with your three address translation
-    /****************************************/
-
     /***************** Simple Expression Evaluator ***********************/
 
     private int E( )
@@ -94,8 +89,8 @@ public class EvalParser
         return E();
     }
 
-    /* TODO #2: Now add three address translation to your parser*/
-    //***
+    /***************** Three Address Translator ***********************/
+
     private int threeE()
     {
         int result = threeT();
@@ -189,7 +184,7 @@ public class EvalParser
         }
         return result;
     }
-    //***
+
     public String getThreeAddr( String eval )
     {
         this.threeAddressResult = "";
@@ -199,6 +194,8 @@ public class EvalParser
         threeE();
         return this.threeAddressResult;
     }
+
+    /****************************************/
 
     private Scanner.Token lookahead( )
     {
