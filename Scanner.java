@@ -2,7 +2,7 @@ public class Scanner
 {
     enum TokenType
     {
-        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, INVALID
+        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, EQUALS, NOTEQUALS, ASSIGN, ID, INT, SEMICOLON, LEFTCURLY, RIGHTCURLY, IF, WHILE, VOID, INVALID
     }
 
     class Token
@@ -25,7 +25,7 @@ public class Scanner
     public Token extractToken( StringBuilder stream )
     {
         char aChar = stream.charAt( 0 );
-        String aValue;
+        String aValue = "";
         while ( stream.length() != 0 )
         {
             aChar = stream.charAt( 0 );
@@ -44,7 +44,7 @@ public class Scanner
             return null;
         }
 
-        TokenType aType;
+        TokenType aType = TokenType.INVALID;
 
         if ( Character.isDigit( aChar ) )
         {
@@ -64,6 +64,62 @@ public class Scanner
             }
             aValue = a.toString();
             aType = TokenType.NUM;
+        }
+        else if( ( aChar >= 'a' && aChar <= 'z' ) || ( aChar >= 'A' && aChar <= 'Z' ) )
+        {
+            StringBuilder a = new StringBuilder();
+            while ( stream.length() != 0 )
+            {
+                aChar = stream.charAt( 0 );
+                if ( Character.isLetterOrDigit( aChar ) )
+                {
+                    a.append( aChar );
+                    stream.deleteCharAt( 0 );
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            aValue = a.toString();
+
+            switch ( a.toString() )
+            {
+                case "int":
+                    aType = TokenType.INT;
+                    break;
+                case "if":
+                    aType = TokenType.IF;
+                    break;
+                case "while":
+                    aType = TokenType.WHILE;
+                    break;
+                case "void":
+                    aType = TokenType.VOID;
+                    break;
+                default:
+                    aType = TokenType.ID;
+                    break;
+            }
+        }
+        else if( aChar == ';' )
+        {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
+            aType = TokenType.SEMICOLON;
+        }
+        else if( aChar == '{' )
+        {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
+            aType = TokenType.LEFTCURLY;
+        }
+        else if( aChar == '}' )
+        {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
+            aType = TokenType.RIGHTCURLY;
         }
         else if ( aChar == '+' )
         {
@@ -113,6 +169,30 @@ public class Scanner
                 stream.deleteCharAt( 0 );
                 aValue += '=';
                 aType = TokenType.GTE;
+            }
+        }
+        else if( aChar == '!' )
+        {
+            aValue = String.valueOf( aChar );
+            stream.deleteCharAt( 0 );
+            if ( stream.length() != 0 && stream.charAt( 0 ) == '=' )
+            {
+                stream.deleteCharAt( 0 );
+                aValue += '=';
+                aType = TokenType.NOTEQUALS;
+            }
+        }
+        else if( aChar == '=' )
+        {
+            aValue = String.valueOf( aChar );
+            stream.deleteCharAt( 0 );
+            aType = TokenType.ASSIGN;
+
+            if ( stream.length() != 0 && stream.charAt( 0 ) == '=' )
+            {
+                stream.deleteCharAt( 0 );
+                aValue += '=';
+                aType = TokenType.EQUALS;
             }
         }
         else if ( aChar == '(' )
