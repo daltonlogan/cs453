@@ -191,14 +191,9 @@ public class EvalParserTest{
     System.out.println("Congrats: three address generation tests passed! Now make your own test cases "+
                        "(this is only a subset of what we will test your code on)");
     System.out.println("*******************************************");
-    
-    System.out.println("Lazy tree testing");
-    eval = "9 + 2";
-    System.out.println("9 + 2");
-    System.out.println(parser.printTree(eval));
-    
-    eval = "1 * 2 + 3 * 4";
-    System.out.println("1 * 2 + 3 * 4");
+
+    eval = "void blarg()";
+    System.out.println("void blarg()");
     System.out.println(parser.printTree(eval));
     System.out.println("done");
   }
