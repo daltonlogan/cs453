@@ -7,15 +7,15 @@ public class SimpleJavaTest{
 
         String eval = "void blarg() {}";
         String result = "";
-//        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
 
         eval = "void main() {int x = 3 + 2;}";
         result = "temp0 = 3\ntemp1 = 2\ntemp2 = temp0 + temp1\nx = temp2\n";
-//        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
 
         eval = "void main() {int x = 4 / 2;}";
         result = "temp0 = 4\ntemp1 = 2\ntemp2 = temp0 / temp1\nx = temp2\n";
-//        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
 
         eval = "void main() { int x = 12; if(3 < 6) { int y = 3; } }";
         result = "temp0 = 12\n"+
@@ -28,7 +28,7 @@ public class SimpleJavaTest{
                 "temp0 = 3\n"+
                 "y = temp0\n"+
                 "falseLabel0\n";
-//        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
 
         eval = "void main() { int x = 3; while(3 < 2) { int x = 4;} }";
         result = "temp0 = 3\n"+
@@ -43,7 +43,7 @@ public class SimpleJavaTest{
                 "x = temp0\n"+
                 "GOTO: repeatLabel0\n"+
                 "falseLabel0\n";
-//        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
 
         eval = "void blarg() {" +
                 "if( 2 + 3 - 2 < 2) {" +

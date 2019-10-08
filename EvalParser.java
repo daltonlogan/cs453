@@ -331,35 +331,35 @@ public class EvalParser
             {
                 parenCounter++;
                 match( nextToken, Scanner.TokenType.LEFTPAREN );
-            }
-            nextToken = lookahead();
-            if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.RIGHTPAREN )
-            {
-                parenCounter--;
-                match( nextToken, Scanner.TokenType.RIGHTPAREN );
-                if ( !expressionInside )
+                aNode = A();
+
+                nextToken = lookahead();
+                if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.RIGHTPAREN )
                 {
-                    throw new Exception();
+                    parenCounter--;
+                    match( nextToken, Scanner.TokenType.RIGHTPAREN );
+                    if ( !expressionInside )
+                    {
+                        throw new Exception();
+                    }
                 }
+                return aNode;
             }
-            else if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.NUM )
+
+
+            if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.NUM )
             {
                 match( nextToken, Scanner.TokenType.NUM );
                 expressionInside = true;
                 aNode = new node( Scanner.TokenType.NUM, nextToken.tokenVal );
                 aNode.loc = tempID++;
                 return aNode;
-
             }
             else if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.ID )
             {
                 match( nextToken, Scanner.TokenType.ID );
                 aNode = new node( Scanner.TokenType.ID, nextToken.tokenVal );
                 return aNode;
-            }
-            else
-            {
-                throw new Exception();
             }
 
             if ( parenCounter != 0 )
