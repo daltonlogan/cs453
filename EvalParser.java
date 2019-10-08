@@ -1,57 +1,27 @@
 import java.util.ArrayList;
 
-public class EvalParser {
+public class EvalParser
+{
     Scanner scan = new Scanner();
     String evalString;
 
     int tempID = 0;
     String threeAddressResult = "";
-    ArrayList<Integer> IDs = new ArrayList<Integer>();
-    ArrayList<Integer> trueLabelIDs = new ArrayList<Integer>();
-    ArrayList<Integer> falseLabelIDs = new ArrayList<Integer>();
-    ArrayList<Integer> repeatLabelIDs = new ArrayList<Integer>();
-    ArrayList<node> nodes = new ArrayList<node>();
-    node root = new node( Scanner.TokenType.INVALID, "");
+    ArrayList< Integer > IDs = new ArrayList< Integer >();
+    ArrayList< node > nodes = new ArrayList< node >();
+    node root = new node( Scanner.TokenType.PROGRAM );
     private int parenCounter = 0;
     boolean expressionInside;
 
     int tlabelID = 0; // Label id for true
     int flabelID = 0; // Label id for false
     int rlabelID = 0; // Label id for loops
-    
-    /* 
-     * Any leaf node there should only be one child, this will be the left node
-     * Any interior node should have two children, what is left of the operation and what is to the right
-     */
-    
-    private class node{
-    	Scanner.TokenType type;
-    	String value;
-    	int num;
-    	node childLeft = null;
-    	node childRight = null;
-    	
-    	node( Scanner.TokenType type, String value){
-    		this.type = type;
-    		this.value = value;
-    	}
+    private String threeAddress = "";
 
-        node( Scanner.TokenType type, int expr){
-            this.type = type;
-            num = expr;
-        }
-    	
-    	public String toString() {
-    		String val = "Node type:" + type + ", Node value:" + value;
-    		if(this.type != Scanner.TokenType.NUM)
-    			val += ", Left Child (" + this.childLeft.toString() + ")" + ", Right Child (" + this.childRight.toString() + ")";
-    		return val;
-    	}
-    }   
 
     /***************** Simple Expression Evaluator ***********************/
 
-    public String program(String eval)
+    public node program( String eval )
     {
         threeAddressResult = "";
         evalString = eval;
@@ -70,92 +40,81 @@ public class EvalParser {
             match( nextToken, Scanner.TokenType.RIGHTPAREN );
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.LEFTCURLY );
-            stmt_list();
+            root = stmt_list();
+            root.type = Scanner.TokenType.PROGRAM;
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTCURLY );
-        }
-        catch ( Exception e )
+        } catch ( Exception e )
         {
             e.printStackTrace();
         }
 
-        return threeAddressResult;
+        return root;
     }
 
-
-    private void stmt_list()
+    private node stmt_list( )
     {
-        Scanner.Token nextToken;
-        do
+        node result = new node();
+        node stmt = stmt();
+        while ( stmt != null )
         {
-            stmt();
-            nextToken = lookahead();
+            result.stmts.add( stmt );
+            stmt = stmt();
         }
-        while( nextToken != null && ( nextToken.tokenType == Scanner.TokenType.IF || nextToken.tokenType == Scanner.TokenType.WHILE ) );
+        return result;
     }
 
-    private void stmt()
+    private node stmt( )
     {
         Scanner.Token nextToken = lookahead();
-        if( nextToken == null )
+        if ( nextToken == null )
         {
-            return;
+            return null;
         }
 
-        switch ( nextToken.tokenType ){
+        switch ( nextToken.tokenType )
+        {
             case INT:
-                assignment();
-                break;
+                return assignment();
             case IF:
             case WHILE:
-                control_flow();
-                break;
+                return control_flow();
         }
+        return null;
     }
 
-    private void assignment()
-    {
-        try
-        {
-            Scanner.Token nextToken = lookahead();
-            match( nextToken, Scanner.TokenType.INT );
-            F();
-            nextToken = lookahead();
-            match( nextToken, Scanner.TokenType.ASSIGN );
-            E();
-
-            nextToken = lookahead();
-            match( nextToken, Scanner.TokenType.SEMICOLON );
-            int first = IDs.remove(IDs.size() - 1);
-            int second = IDs.remove(IDs.size() - 1);
-            node firstNode = nodes.remove(nodes.size() - 1);
-            node secondNode = nodes.remove(nodes.size() - 1);
-            node tempNode = new node( Scanner.TokenType.ASSIGN, "=");
-            tempNode.childRight = firstNode;
-            tempNode.childLeft = secondNode;
-            nodes.add(tempNode);
-            IDs.add(tempID);
-            threeAddressResult += secondNode.value + " = " +
-                    "temp" + first + "\n";
-
-            tempID = 0;
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private void control_flow()
+    private node assignment( )
     {
         Scanner.Token nextToken = lookahead();
-        if( nextToken != null && nextToken.tokenType == Scanner.TokenType.IF )
+        match( nextToken, Scanner.TokenType.INT );
+        node result = A();
+        nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.ASSIGN );
+        node mid = new node( Scanner.TokenType.ASSIGN );
+        node right = E();
+        mid.left = result;
+        mid.right = right;
+        result = mid;
+        result.loc = mid.left.loc;
+        nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.SEMICOLON );
+
+        tempID = 0;
+
+        return result;
+    }
+
+    private node control_flow( )
+    {
+        Scanner.Token nextToken = lookahead();
+        node result = new node();
+        if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.IF )
         {
 //            if ( expr ) { stmt_list } |
             match( nextToken, Scanner.TokenType.IF );
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.LEFTPAREN );
-            A();
+            result = A();
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTPAREN );
             nextToken = lookahead();
@@ -163,19 +122,28 @@ public class EvalParser {
             tempID = 0;
 
             match( nextToken, Scanner.TokenType.LEFTCURLY );
-            stmt_list();
+
+            node mid = new node( Scanner.TokenType.IF );
+            node right = stmt_list();
+            mid.left = result;
+            mid.right = right;
+            result = mid;
+            result.loc = mid.left.loc;
+
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTCURLY );
-            threeAddressResult += "falseLabel" + flabelID + "\n";
+
+
+//            threeAddressResult += "falseLabel" + flabelID + "\n";
         }
-        else if( nextToken != null && nextToken.tokenType == Scanner.TokenType.WHILE )
+        else if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.WHILE )
         {
 //            while ( expr ) { stmt_list }
             match( nextToken, Scanner.TokenType.WHILE );
             threeAddressResult += "repeatLabel" + rlabelID + "\n";
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.LEFTPAREN );
-            A();
+            result = A();
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTPAREN );
             nextToken = lookahead();
@@ -183,296 +151,250 @@ public class EvalParser {
             tempID = 0;
 
             match( nextToken, Scanner.TokenType.LEFTCURLY );
-            stmt_list();
+
+            node mid = new node( Scanner.TokenType.WHILE );
+            node right = stmt_list();
+            mid.left = result;
+            mid.right = right;
+            result = mid;
+            result.loc = mid.left.loc;
+
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTCURLY );
-            threeAddressResult += "GOTO: repeatLabel" + rlabelID + "\n";
-            threeAddressResult += "falseLabel" + flabelID + "\n";
+//            threeAddressResult += "GOTO: repeatLabel" + rlabelID + "\n";
+//            threeAddressResult += "falseLabel" + flabelID + "\n";
         }
-
-    }
-
-
-    private void A()
-    {
-        B();
-        while (true) {
-            Scanner.Token nextToken = lookahead();
-            if (nextToken != null && nextToken.tokenType == Scanner.TokenType.EQUALS) {
-                match(nextToken, Scanner.TokenType.EQUALS);
-                E();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.EQUALS, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                threeAddressResult += "IF_EQ: " + "temp" + second  + ", " +
-                        "temp" + first + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddressResult += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddressResult += "trueLabel" + tlabelID + "\n";
-                return;
-
-            } else if (nextToken != null && nextToken.tokenType == Scanner.TokenType.NOTEQUALS) {
-                match(nextToken, Scanner.TokenType.NOTEQUALS);
-                E();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.NOTEQUALS, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                threeAddressResult += "IF_NE: " + "temp" + second  + ", " +
-                        "temp" + first + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddressResult += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddressResult += "trueLabel" + tlabelID + "\n";
-                return;
-            }
-            else
-            {
-                return;
-            }
-        }
-    }
-
-    private void B()
-    {
-        E();
-        while (true) {
-            Scanner.Token nextToken = lookahead();
-            if (nextToken != null && nextToken.tokenType == Scanner.TokenType.LT) {
-                match(nextToken, Scanner.TokenType.LT);
-                E();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.LT, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                trueLabelIDs.add( tlabelID );
-                threeAddressResult += "IF_LT: " + "temp" + second  + ", " +
-                        "temp" + first + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddressResult += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddressResult += "trueLabel" + tlabelID + "\n";
-            }
-            else if (nextToken != null && nextToken.tokenType == Scanner.TokenType.GT) {
-                match(nextToken, Scanner.TokenType.GT);
-                E();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.GT, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                trueLabelIDs.add( tlabelID );
-                threeAddressResult += "IF_GT: " + "temp" + second  + ", " +
-                        "temp" + first + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddressResult += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddressResult += "trueLabel" + tlabelID + "\n";
-            }
-            else if (nextToken != null && nextToken.tokenType == Scanner.TokenType.LTE) {
-                match(nextToken, Scanner.TokenType.LTE);
-                E();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.LTE, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                trueLabelIDs.add( tlabelID );
-                threeAddressResult += "IF_LTE: " + "temp" + second  + ", " +
-                        "temp" + first + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddressResult += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddressResult += "trueLabel" + tlabelID + "\n";
-            }
-            else if (nextToken != null && nextToken.tokenType == Scanner.TokenType.GTE) {
-                match(nextToken, Scanner.TokenType.GTE);
-                E();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.GTE, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                trueLabelIDs.add( tlabelID );
-                threeAddressResult += "IF_GTE: " + "temp" + second  + ", " +
-                        "temp" + first + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddressResult += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddressResult += "trueLabel" + tlabelID + "\n";
-            }
-            else
-            {
-                return;
-            }
-        }
-    }
-
-    private int E() {
-        int result = T();
-        while (true) {
-            Scanner.Token nextToken = lookahead();
-            if (nextToken != null && nextToken.tokenType == Scanner.TokenType.PLUS) {
-                match(nextToken, Scanner.TokenType.PLUS);
-                result += T();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.PLUS, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                threeAddressResult += "temp" + tempID + " = " +
-                        "temp" + second + " + " +
-                        "temp" + first + "\n";
-                IDs.add(tempID++);
-                continue;
-            } else if (nextToken != null && nextToken.tokenType == Scanner.TokenType.MINUS) {
-                match(nextToken, Scanner.TokenType.MINUS);
-                result -= T();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.MINUS, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                threeAddressResult += "temp" + tempID++ + " = " +
-                        "temp" + second + " - " +
-                        "temp" + first + "\n";
-                continue;
-            }
-            return result;
-        }
-    }
-
-    private int T() {
-        int result = F();
-        while (true) {
-            Scanner.Token nextToken = lookahead();
-            if (nextToken != null && nextToken.tokenType == Scanner.TokenType.MUL) {
-                match(nextToken, Scanner.TokenType.MUL);
-                result *= F();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.MUL, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                threeAddressResult += "temp" + tempID++ + " = " +
-                        "temp" + second + " * " +
-                        "temp" + first + "\n";
-                continue;
-            } else if (nextToken != null && nextToken.tokenType == Scanner.TokenType.DIV) {
-                match(nextToken, Scanner.TokenType.DIV);
-                result /= F();
-                int first = IDs.remove(IDs.size() - 1);
-                int second = IDs.remove(IDs.size() - 1);
-                node firstNode = nodes.remove(nodes.size() - 1);
-                node secondNode = nodes.remove(nodes.size() - 1);
-                node tempNode = new node( Scanner.TokenType.DIV, "");
-                tempNode.childRight = firstNode;
-                tempNode.childLeft = secondNode;
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                threeAddressResult += "temp" + tempID++ + " = " +
-                        "temp" + second + " / " +
-                        "temp" + first + "\n";
-                continue;
-            }
-            return result;
-        }
-    }
-
-    private int F() {
-
-        int result = 0;
-        try {
-            Scanner.Token nextToken = lookahead();
-            if (nextToken != null && nextToken.tokenType == Scanner.TokenType.LEFTPAREN) {
-                parenCounter++;
-                match(nextToken, Scanner.TokenType.LEFTPAREN);
-                result += E();
-            }
-            nextToken = lookahead();
-            if (nextToken != null && nextToken.tokenType == Scanner.TokenType.RIGHTPAREN) {
-                parenCounter--;
-                match(nextToken, Scanner.TokenType.RIGHTPAREN);
-                if (!expressionInside) {
-                    throw new Exception();
-                }
-            } else if (nextToken != null && nextToken.tokenType == Scanner.TokenType.NUM) {
-                int num = Integer.parseInt(nextToken.tokenVal);
-                node tempNode = new node( Scanner.TokenType.NUM, String.valueOf(num));
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                threeAddressResult += "temp" + tempID++ + " = " + num + "\n";
-                match(nextToken, Scanner.TokenType.NUM);
-                expressionInside = true;
-                return num;
-            }
-            else if( nextToken != null && nextToken.tokenType == Scanner.TokenType.ID )
-            {
-                String id = nextToken.tokenVal;
-                node tempNode = new node( Scanner.TokenType.ID, id);
-                nodes.add(tempNode);
-                IDs.add(tempID);
-                match(nextToken, Scanner.TokenType.ID);
-            }
-            else {
-                throw new Exception();
-            }
-
-            if (parenCounter != 0) {
-                throw new Exception();
-            }
-        } catch (Exception e) {
-            System.out.println("Invalid input");
-            expressionInside = false;
+        else
+        {
+            return null;
         }
         return result;
+    }
+
+
+    private node A( )
+    {
+
+        node result = B();
+
+        while ( lookahead().tokenType == Scanner.TokenType.EQUALS || lookahead().tokenType == Scanner.TokenType.NOTEQUALS )
+        {
+            Scanner.Token nextToken = lookahead();
+
+            if ( nextToken.tokenType == Scanner.TokenType.EQUALS )
+            {
+                match( nextToken, Scanner.TokenType.EQUALS );
+                node mid = new node( Scanner.TokenType.EQUALS );
+                node right = B();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+            else if ( nextToken.tokenType == Scanner.TokenType.NOTEQUALS )
+            {
+                match( nextToken, Scanner.TokenType.NOTEQUALS );
+                node mid = new node( Scanner.TokenType.NOTEQUALS );
+                node right = B();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+        }
+        return result;
+    }
+
+    private node B( )
+    {
+        node result = E();
+
+        while ( lookahead().tokenType == Scanner.TokenType.LT || lookahead().tokenType == Scanner.TokenType.GT
+                || lookahead().tokenType == Scanner.TokenType.LTE || lookahead().tokenType == Scanner.TokenType.GTE )
+        {
+            Scanner.Token nextToken = lookahead();
+
+            if ( nextToken.tokenType == Scanner.TokenType.LT )
+            {
+                match( nextToken, Scanner.TokenType.LT );
+                node mid = new node( Scanner.TokenType.LT );
+                node right = E();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+            else if ( nextToken.tokenType == Scanner.TokenType.GT )
+            {
+                match( nextToken, Scanner.TokenType.GT );
+                node mid = new node( Scanner.TokenType.GT );
+                node right = E();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+            else if ( nextToken.tokenType == Scanner.TokenType.LTE )
+            {
+                match( nextToken, Scanner.TokenType.LTE );
+                node mid = new node( Scanner.TokenType.LTE );
+                node right = E();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+            else if ( nextToken.tokenType == Scanner.TokenType.GTE )
+            {
+                match( nextToken, Scanner.TokenType.GTE );
+                node mid = new node( Scanner.TokenType.GTE );
+                node right = E();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+        }
+        return result;
+    }
+
+    private node E( )
+    {
+        node result = T();
+
+        while ( lookahead().tokenType == Scanner.TokenType.PLUS || lookahead().tokenType == Scanner.TokenType.MINUS )
+        {
+            Scanner.Token nextToken = lookahead();
+
+            if ( nextToken.tokenType == Scanner.TokenType.PLUS )
+            {
+                match( nextToken, Scanner.TokenType.PLUS );
+                node mid = new node( Scanner.TokenType.PLUS );
+                node right = T();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+            else if ( nextToken.tokenType == Scanner.TokenType.MINUS )
+            {
+                match( nextToken, Scanner.TokenType.MINUS );
+                node mid = new node( Scanner.TokenType.MINUS );
+                node right = T();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+        }
+        return result;
+    }
+
+    private node T( )
+    {
+        node result = F();
+        while ( lookahead().tokenType == Scanner.TokenType.MUL || lookahead().tokenType == Scanner.TokenType.DIV )
+        {
+            Scanner.Token nextToken = lookahead();
+
+            if ( nextToken.tokenType == Scanner.TokenType.MUL )
+            {
+                match( nextToken, Scanner.TokenType.MUL );
+                node mid = new node( Scanner.TokenType.MUL );
+                node right = T();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+            else if ( nextToken.tokenType == Scanner.TokenType.DIV )
+            {
+                match( nextToken, Scanner.TokenType.DIV );
+                node mid = new node( Scanner.TokenType.DIV );
+                node right = T();
+                mid.left = result;
+                mid.right = right;
+                result = mid;
+                result.loc = tempID++;
+            }
+        }
+        return result;
+    }
+
+    private node F( )
+    {
+        node aNode;
+        try
+        {
+            Scanner.Token nextToken = lookahead();
+            if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.LEFTPAREN )
+            {
+                parenCounter++;
+                match( nextToken, Scanner.TokenType.LEFTPAREN );
+            }
+            nextToken = lookahead();
+            if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.RIGHTPAREN )
+            {
+                parenCounter--;
+                match( nextToken, Scanner.TokenType.RIGHTPAREN );
+                if ( !expressionInside )
+                {
+                    throw new Exception();
+                }
+            }
+            else if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.NUM )
+            {
+                match( nextToken, Scanner.TokenType.NUM );
+                expressionInside = true;
+                aNode = new node( Scanner.TokenType.NUM, nextToken.tokenVal );
+                aNode.loc = tempID++;
+                return aNode;
+
+            }
+            else if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.ID )
+            {
+                match( nextToken, Scanner.TokenType.ID );
+                aNode = new node( Scanner.TokenType.ID, nextToken.tokenVal );
+                return aNode;
+            }
+            else
+            {
+                throw new Exception();
+            }
+
+            if ( parenCounter != 0 )
+            {
+                throw new Exception();
+            }
+        } catch ( Exception e )
+        {
+            System.out.println( "Invalid input" );
+            expressionInside = false;
+        }
+        return null;
     }
 
     /****************************************/
 
-    public int evaluateExpression(String eval) {
+    public int evaluateExpression( String eval )
+    {
 
         evalString = eval;
-        int result = E();
-        try {
-            if (!evalString.isEmpty()) {
+        try
+        {
+            if ( !evalString.isEmpty() )
+            {
                 throw new Exception();
             }
-        } catch (Exception e) {
+        } catch ( Exception e )
+        {
             System.out.println( "Input string not empty" );
         }
-        return result;
+        return 0;
     }
 
-    public String getThreeAddr(String eval) {
+    public String getThreeAddr( String eval )
+    {
         this.threeAddressResult = "";
         evalString = eval;
         tempID = 0;
@@ -480,18 +402,96 @@ public class EvalParser {
         E();
         return this.threeAddressResult;
     }
-    
-    public String printTree(String eval) {
-    	this.threeAddressResult = "";
-    	evalString = eval;
-    	tempID = 0;
-    	nodes.clear();
-    	IDs.clear();
-    	//return root.toString();
-        return program( eval );
+
+    public String emitTAC( node aNode )
+    {
+        if ( aNode == null )
+        {
+            return threeAddress;
+        }
+
+        if( aNode.type == Scanner.TokenType.WHILE )
+        {
+            threeAddress += "repeatLabel" + rlabelID + "\n";
+        }
+
+        emitTAC( aNode.left );
+        emitTAC( aNode.right );
+
+        for ( node theNode : aNode.stmts )
+        {
+            emitTAC( theNode );
+        }
+
+        switch ( aNode.type )
+        {
+            case NUM:
+                threeAddress += "temp" + aNode.loc + " = " + aNode.value + "\n";
+                break;
+            case ASSIGN:
+                threeAddress += aNode.left.value + " = " + "temp" + aNode.right.loc + "\n";
+                break;
+            case PLUS:
+                threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " + " + "temp" + aNode.right.loc + "\n";
+                break;
+            case MINUS:
+                threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " - " + "temp" + aNode.right.loc + "\n";
+                break;
+            case MUL:
+                threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " * " + "temp" + aNode.right.loc + "\n";
+                break;
+            case DIV:
+                threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " / " + "temp" + aNode.right.loc + "\n";
+                break;
+            case LT:
+                threeAddress += "IF_LT: " + "temp" + aNode.left.loc + ", " +
+                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID + "\n";
+                break;
+            case GT:
+                threeAddress += "IF_GT: " + "temp" + aNode.left.loc + ", " +
+                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID + "\n";
+                break;
+            case LTE:
+                threeAddress += "IF_LTE: " + "temp" + aNode.left.loc + ", " +
+                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID + "\n";
+                break;
+            case GTE:
+                threeAddress += "IF_GTE: " + "temp" + aNode.left.loc + ", " +
+                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID + "\n";
+                break;
+            case EQUALS:
+                threeAddress += "IF_EQ: " + "temp" + aNode.left.loc + ", " +
+                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID + "\n";
+                break;
+            case NOTEQUALS:
+                threeAddress += "IF_NE: " + "temp" + aNode.left.loc + ", " +
+                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID + "\n";
+                break;
+            case IF:
+                threeAddress += "falseLabel" + flabelID + "\n";
+                break;
+            case WHILE:
+                threeAddress += "GOTO: repeatLabel" + rlabelID + "\n" +
+                        "falseLabel" + flabelID + "\n";
+                break;
+        }
+        return threeAddress;
     }
 
-    private Scanner.Token lookahead() {
+    private Scanner.Token lookahead( )
+    {
         try
         {
             if ( evalString.isEmpty() )
@@ -503,9 +503,11 @@ public class EvalParser {
             {
                 throw new Exception();
             }
-            else return aToken;
-        }
-        catch ( Exception e )
+            else
+            {
+                return aToken;
+            }
+        } catch ( Exception e )
         {
             e.printStackTrace();
             System.exit( -1 );
@@ -513,7 +515,8 @@ public class EvalParser {
         return null;
     }
 
-    private void match(Scanner.Token aToken, Scanner.TokenType expectedToken) {
+    private void match( Scanner.Token aToken, Scanner.TokenType expectedToken )
+    {
         try
         {
             if ( aToken == null )
@@ -532,8 +535,7 @@ public class EvalParser {
             {
                 throw new Exception();
             }
-        }
-        catch ( Exception e )
+        } catch ( Exception e )
         {
             e.printStackTrace();
             System.exit( -1 );

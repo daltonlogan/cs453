@@ -191,11 +191,6 @@ public class EvalParserTest{
     System.out.println("Congrats: three address generation tests passed! Now make your own test cases "+
                        "(this is only a subset of what we will test your code on)");
     System.out.println("*******************************************");
-
-    eval = "void blarg()";
-    System.out.println("void blarg()");
-    System.out.println(parser.printTree(eval));
-    System.out.println("done");
   }
 
   public static void main(String[] args){
