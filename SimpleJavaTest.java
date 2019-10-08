@@ -145,8 +145,37 @@ public class SimpleJavaTest{
                 "falseLabel0\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
 
-        System.out.println("Congrats: three address generation tests passed! Now make your own test cases "+
-                "(this is only a subset of what we will test your code on)");
+        eval = "void main() {if(2 >= 3){int x = 5 - 5;}}";
+        result ="temp0 = 2\n" +
+                "temp1 = 3\n" +
+                "IF_GTE: temp0, temp1, trueLabel0\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel0\n" +
+                "temp0 = 5\n" +
+                "temp1 = 5\n" +
+                "temp2 = temp0 - temp1\n" +
+                "x = temp2\n" +
+                "falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
+
+        eval = "void main() {while(2 != 3){int x = 5 + 5 * 5;}}";
+        result ="repeatLabel0\n" +
+                "temp0 = 2\n" +
+                "temp1 = 3\n" +
+                "IF_NE: temp0, temp1, trueLabel0\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel0\n" +
+                "temp0 = 5\n" +
+                "temp1 = 5\n" +
+                "temp2 = 5\n" +
+                "temp3 = temp1 * temp2\n" +
+                "temp4 = temp0 + temp3\n" +
+                "x = temp4\n" +
+                "GOTO: repeatLabel0\n" +
+                "falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
+
+        System.out.println("Congrats: Passed all tests!!!");
         System.out.println("*******************************************");
     }
 

@@ -46,13 +46,14 @@ public class EvalParser
             match( nextToken, Scanner.TokenType.RIGHTCURLY );
         } catch ( Exception e )
         {
-            e.printStackTrace();
+            System.out.println( "ERROR: Syntax error - " + e.getMessage() );
+            System.exit( -1 );
         }
 
         return root;
     }
 
-    private node stmt_list( )
+    private node stmt_list( ) throws Exception
     {
         node result = new node();
         node stmt = stmt();
@@ -64,7 +65,7 @@ public class EvalParser
         return result;
     }
 
-    private node stmt( )
+    private node stmt( ) throws Exception
     {
         Scanner.Token nextToken = lookahead();
         if ( nextToken == null )
@@ -104,7 +105,7 @@ public class EvalParser
         return result;
     }
 
-    private node control_flow( )
+    private node control_flow( ) throws Exception
     {
         Scanner.Token nextToken = lookahead();
         node result = new node();
@@ -140,10 +141,13 @@ public class EvalParser
         {
 //            while ( expr ) { stmt_list }
             match( nextToken, Scanner.TokenType.WHILE );
-            threeAddressResult += "repeatLabel" + rlabelID + "\n";
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.LEFTPAREN );
             result = A();
+            if( result == null )
+            {
+                throw new Exception( "No expression inside while" );
+            }
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTPAREN );
             nextToken = lookahead();
@@ -340,7 +344,7 @@ public class EvalParser
                     match( nextToken, Scanner.TokenType.RIGHTPAREN );
                     if ( !expressionInside )
                     {
-                        throw new Exception();
+                        throw new Exception( "No expression inside parentheses" );
                     }
                 }
                 return aNode;
@@ -364,12 +368,13 @@ public class EvalParser
 
             if ( parenCounter != 0 )
             {
-                throw new Exception();
+                throw new Exception( "Parenthesis count wrong" );
             }
         } catch ( Exception e )
         {
-            System.out.println( "Invalid input" );
+            System.out.println( "ERROR: Syntax error - " + e.getMessage() );
             expressionInside = false;
+            System.exit( -1 );
         }
         return null;
     }
@@ -405,87 +410,95 @@ public class EvalParser
 
     public String emitTAC( node aNode )
     {
-        if ( aNode == null )
+        try
         {
-            return threeAddress;
+            if ( aNode == null )
+            {
+                return threeAddress;
+            }
+
+            if ( aNode.type == Scanner.TokenType.WHILE )
+            {
+                threeAddress += "repeatLabel" + rlabelID + "\n";
+            }
+
+            emitTAC( aNode.left );
+            emitTAC( aNode.right );
+
+            for ( node theNode : aNode.stmts )
+            {
+                emitTAC( theNode );
+            }
+
+            switch ( aNode.type )
+            {
+                case NUM:
+                    threeAddress += "temp" + aNode.loc + " = " + aNode.value + "\n";
+                    break;
+                case ASSIGN:
+                    threeAddress += aNode.left.value + " = " + "temp" + aNode.right.loc + "\n";
+                    break;
+                case PLUS:
+                    threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " + " + "temp" + aNode.right.loc + "\n";
+                    break;
+                case MINUS:
+                    threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " - " + "temp" + aNode.right.loc + "\n";
+                    break;
+                case MUL:
+                    threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " * " + "temp" + aNode.right.loc + "\n";
+                    break;
+                case DIV:
+                    threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " / " + "temp" + aNode.right.loc + "\n";
+                    break;
+                case LT:
+                    threeAddress += "IF_LT: " + "temp" + aNode.left.loc + ", " +
+                            "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                    break;
+                case GT:
+                    threeAddress += "IF_GT: " + "temp" + aNode.left.loc + ", " +
+                            "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                    break;
+                case LTE:
+                    threeAddress += "IF_LTE: " + "temp" + aNode.left.loc + ", " +
+                            "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                    break;
+                case GTE:
+                    threeAddress += "IF_GTE: " + "temp" + aNode.left.loc + ", " +
+                            "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                    break;
+                case EQUALS:
+                    threeAddress += "IF_EQ: " + "temp" + aNode.left.loc + ", " +
+                            "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                    break;
+                case NOTEQUALS:
+                    threeAddress += "IF_NE: " + "temp" + aNode.left.loc + ", " +
+                            "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
+                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
+                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                    break;
+                case IF:
+                    threeAddress += "falseLabel" + flabelID++ + "\n";
+                    break;
+                case WHILE:
+                    threeAddress += "GOTO: repeatLabel" + rlabelID++ + "\n" +
+                            "falseLabel" + flabelID++ + "\n";
+                    break;
+            }
         }
-
-        if( aNode.type == Scanner.TokenType.WHILE )
+        catch ( Exception e )
         {
-            threeAddress += "repeatLabel" + rlabelID + "\n";
-        }
-
-        emitTAC( aNode.left );
-        emitTAC( aNode.right );
-
-        for ( node theNode : aNode.stmts )
-        {
-            emitTAC( theNode );
-        }
-
-        switch ( aNode.type )
-        {
-            case NUM:
-                threeAddress += "temp" + aNode.loc + " = " + aNode.value + "\n";
-                break;
-            case ASSIGN:
-                threeAddress += aNode.left.value + " = " + "temp" + aNode.right.loc + "\n";
-                break;
-            case PLUS:
-                threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " + " + "temp" + aNode.right.loc + "\n";
-                break;
-            case MINUS:
-                threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " - " + "temp" + aNode.right.loc + "\n";
-                break;
-            case MUL:
-                threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " * " + "temp" + aNode.right.loc + "\n";
-                break;
-            case DIV:
-                threeAddress += "temp" + aNode.loc + " = " + "temp" + aNode.left.loc + " / " + "temp" + aNode.right.loc + "\n";
-                break;
-            case LT:
-                threeAddress += "IF_LT: " + "temp" + aNode.left.loc + ", " +
-                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID++ + "\n";
-                break;
-            case GT:
-                threeAddress += "IF_GT: " + "temp" + aNode.left.loc + ", " +
-                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID++ + "\n";
-                break;
-            case LTE:
-                threeAddress += "IF_LTE: " + "temp" + aNode.left.loc + ", " +
-                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID++ + "\n";
-                break;
-            case GTE:
-                threeAddress += "IF_GTE: " + "temp" + aNode.left.loc + ", " +
-                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID++ + "\n";
-                break;
-            case EQUALS:
-                threeAddress += "IF_EQ: " + "temp" + aNode.left.loc + ", " +
-                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID++ + "\n";
-                break;
-            case NOTEQUALS:
-                threeAddress += "IF_NE: " + "temp" + aNode.left.loc + ", " +
-                        "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
-                threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID++ + "\n";
-                break;
-            case IF:
-                threeAddress += "falseLabel" + flabelID++ + "\n";
-                break;
-            case WHILE:
-                threeAddress += "GOTO: repeatLabel" + rlabelID++ + "\n" +
-                        "falseLabel" + flabelID++ + "\n";
-                break;
+            System.out.println( "ERROR: Syntax error" );
+            System.exit( -1 );
         }
         return threeAddress;
     }
@@ -501,7 +514,7 @@ public class EvalParser
             Scanner.Token aToken = scan.extractToken( new StringBuilder( evalString ) );
             if ( aToken == null )
             {
-                throw new Exception();
+                throw new Exception( "Token is null" );
             }
             else
             {
@@ -509,7 +522,7 @@ public class EvalParser
             }
         } catch ( Exception e )
         {
-            e.printStackTrace();
+            System.out.println( "ERROR: Syntax error - " + e.getMessage() );
             System.exit( -1 );
         }
         return null;
@@ -521,7 +534,7 @@ public class EvalParser
         {
             if ( aToken == null )
             {
-                return;
+                throw new Exception( "Token is null" );
             }
             while ( Character.isWhitespace( evalString.charAt( 0 ) ) )
             {
@@ -533,11 +546,11 @@ public class EvalParser
             }
             else
             {
-                throw new Exception();
+                throw new Exception( "Unexpected token type: " + aToken.tokenType + " , Expected Type: " + expectedToken );
             }
         } catch ( Exception e )
         {
-            e.printStackTrace();
+            System.out.println( "ERROR: Syntax error - " + e.getMessage() );
             System.exit( -1 );
         }
     }
