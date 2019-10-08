@@ -107,6 +107,29 @@ public class SimpleJavaTest{
                 "falseLabel0\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
 
+        eval = "void main() {if(2 + 3 == 1 + 4){int x = 5;} if( 2 < 3 ) {int a = 1;}}";
+        result ="temp0 = 2\n" +
+                "temp1 = 3\n" +
+                "temp2 = temp0 + temp1\n" +
+                "temp3 = 1\n" +
+                "temp4 = 4\n" +
+                "temp5 = temp3 + temp4\n" +
+                "IF_EQ: temp2, temp5, trueLabel0\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel0\n" +
+                "temp0 = 5\n" +
+                "x = temp0\n" +
+                "falseLabel0\n"+
+                "temp0 = 2\n" +
+                "temp1 = 3\n" +
+                "IF_LT: temp0, temp1, trueLabel1\n" +
+                "GOTO: falseLabel1\n" +
+                "trueLabel1\n" +
+                "temp0 = 1\n" +
+                "a = temp0\n" +
+                "falseLabel1\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) throw new AssertionError();
+
         eval = "void main() {if(2 + 3 != 1 + 4){int x = 1;}}";
         result ="temp0 = 2\n" +
                 "temp1 = 3\n" +

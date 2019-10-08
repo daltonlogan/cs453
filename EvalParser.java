@@ -447,44 +447,44 @@ public class EvalParser
                 threeAddress += "IF_LT: " + "temp" + aNode.left.loc + ", " +
                         "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
                 threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID++ + "\n";
                 break;
             case GT:
                 threeAddress += "IF_GT: " + "temp" + aNode.left.loc + ", " +
                         "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
                 threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID++ + "\n";
                 break;
             case LTE:
                 threeAddress += "IF_LTE: " + "temp" + aNode.left.loc + ", " +
                         "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
                 threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID++ + "\n";
                 break;
             case GTE:
                 threeAddress += "IF_GTE: " + "temp" + aNode.left.loc + ", " +
                         "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
                 threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID++ + "\n";
                 break;
             case EQUALS:
                 threeAddress += "IF_EQ: " + "temp" + aNode.left.loc + ", " +
                         "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
                 threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID++ + "\n";
                 break;
             case NOTEQUALS:
                 threeAddress += "IF_NE: " + "temp" + aNode.left.loc + ", " +
                         "temp" + aNode.right.loc + ", " + "trueLabel" + tlabelID + "\n";
                 threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                threeAddress += "trueLabel" + tlabelID + "\n";
+                threeAddress += "trueLabel" + tlabelID++ + "\n";
                 break;
             case IF:
-                threeAddress += "falseLabel" + flabelID + "\n";
+                threeAddress += "falseLabel" + flabelID++ + "\n";
                 break;
             case WHILE:
-                threeAddress += "GOTO: repeatLabel" + rlabelID + "\n" +
-                        "falseLabel" + flabelID + "\n";
+                threeAddress += "GOTO: repeatLabel" + rlabelID++ + "\n" +
+                        "falseLabel" + flabelID++ + "\n";
                 break;
         }
         return threeAddress;

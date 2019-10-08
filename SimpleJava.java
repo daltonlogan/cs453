@@ -3,6 +3,7 @@ public class SimpleJava {
     public String getThreeAddr(String eval){
         EvalParser parser = new EvalParser();
         node root = parser.program( eval );
-        return parser.emitTAC( root );
+        String a = parser.emitTAC( root );
+        return a;
     }
 }
