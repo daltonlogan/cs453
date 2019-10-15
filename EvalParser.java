@@ -305,7 +305,7 @@ public class EvalParser
             {
                 match( nextToken, Scanner.TokenType.MUL );
                 node mid = new node( Scanner.TokenType.MUL );
-                node right = T();
+                node right = F();
                 mid.left = result;
                 mid.right = right;
                 result = mid;
@@ -315,7 +315,7 @@ public class EvalParser
             {
                 match( nextToken, Scanner.TokenType.DIV );
                 node mid = new node( Scanner.TokenType.DIV );
-                node right = T();
+                node right = F();
                 mid.left = result;
                 mid.right = right;
                 result = mid;

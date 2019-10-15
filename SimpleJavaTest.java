@@ -215,8 +215,8 @@ public class SimpleJavaTest{
                 "x = temp8\n" +
                 "temp0 = 15\n" +
                 "temp1 = x * temp0\n" +
-                "y = temp1";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+                "y = temp1\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n");
 
         System.out.println("Testing: void main() {int x = 3; int yooo = 12; int t11 = 15; int names23 = 9; int h2t4y78e = 43;}");
         eval = "void main() {int x = 3; int yooo = 12; int t11 = 15; int names23 = 9; int h2t4y78e = 43;}";
