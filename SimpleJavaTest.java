@@ -289,7 +289,291 @@ public class SimpleJavaTest{
                 "trueLabel1\n" +
                 "falseLabel1\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+/*        
+        System.out.println("Testing: void main() {if (3 < 4){if(9082 >= te3){}}");
+        eval = "void main() {if (3 < 4){if(9082 >= te3){}}";
+        result = "temp0 = 3\n" + 
+        		"temp1 = 4\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 9082\n" + 
+        		"IF_GTE: temp0, te3, trueLabel1\n" + 
+        		"GOTO: falseLabel1\n" + 
+        		"trueLabel1\n" + 
+        		"falseLabel1\n" + 
+        		"falseLabel0\n" + 
+        		"Error, Got: temp0 = 3\n" + 
+        		"temp1 = 4\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 9082\n" + 
+        		"IF_GTE: temp0, temp0, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+*//*
+        System.out.println("Testing: void main() {if (3 < 4){if(9082 >= te3){} int y4t = 34;}}");
+        eval = "void main() {if (3 < 4){if(9082 >= te3){} int y4t = 34;}}";
+        result = "temp0 = 3\n" + 
+        		"temp1 = 4\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 9082\n" + 
+        		"IF_GTE: temp0, te3, trueLabel1\n" + 
+        		"GOTO: falseLabel1\n" + 
+        		"trueLabel1\n" + 
+        		"falseLabel1\n" + 
+        		"falseLabel0\n" + 
+        		"temp0 = 34\n" + 
+        		"y4t = temp0\n" + 
+        		"Error, Got: temp0 = 3\n" + 
+        		"temp1 = 4\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 9082\n" + 
+        		"IF_GTE: temp0, temp0, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"temp0 = 34\n" + 
+        		"y4t = temp0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+*//*
+        System.out.println("Testing: void main() {while(15 < 98) {}}");
+        eval = "Testing: void main() {while(15 < 98) {}}}";
+        result = "";
+        //System.out.println(parser.getThreeAddr(eval));
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+*//*
+        System.out.println("Testing: void main() {while(15 < 98) {int yeeee7 = 44;}}");
+        eval = "void main() {while(15 < 98) {int yeeee7 = 44;}}";
+        result = "";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
 
+        System.out.println("Testing: void main() {while(15 < 98) { if(9 == 8){} }}");
+        eval = "void main() {while(15 < 98) { if(9 == 8){} }}";
+        result = "repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel1\n" + 
+        		"GOTO: falseLabel1\n" + 
+        		"trueLabel1\n" + 
+        		"falseLabel1\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"Error, Got: repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+
+        System.out.println("Testing: void main() {while(15 < 98) { if(9 == 8){int z = 98;} }}");
+        eval = "void main() {while(15 < 98) { if(9 == 8){int z = 98;} }}";
+        result = "repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" +
+        		"trueLabel0\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel1\n" + 
+        		"GOTO: falseLabel1\n" + 
+        		"trueLabel1\n" + 
+        		"temp0 = 98\n" + 
+        		"z = temp0\n" + 
+        		"falseLabel1\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"Error, Got: repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 98\n" + 
+        		"z = temp0\n" + 
+        		"falseLabel0\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+
+        System.out.println("Testing: void main() {while(15 < 98) { while(9 == 8){}}}");
+        eval = "void main() {while(15 < 98) { while(9 == 8){}}}";
+        result = "repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"repeatLabel1\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel1\n" + 
+        		"GOTO: falseLabel1\n" + 
+        		"trueLabel1\n" + 
+        		"GOTO: repeatLabel1\n" + 
+        		"falseLabel1\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"Error, Got: repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"repeatLabel0\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+*/ /*
+        System.out.println("Testing: void main() {while(15 < 98) { while(9 == 8){ if(2 != 9){} }}}");
+        eval = "void main() {while(15 < 98) { while(9 == 8){ if(2 != 9){} }}}";
+        result = "repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"repeatLabel1\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel1\n" + 
+        		"GOTO: falseLabel1\n" + 
+        		"trueLabel1\n" + 
+        		"temp0 = 2\n" + 
+        		"temp1 = 9\n" + 
+        		"IF_NE: temp0, temp1, trueLabel2\n" + 
+        		"GOTO: falseLabel2\n" + 
+        		"trueLabel2\n" + 
+        		"falseLabel2\n" + 
+        		"GOTO: repeatLabel1\n" + 
+        		"falseLabel1\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"Error, Got: repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"repeatLabel0\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 2\n" + 
+        		"temp1 = 9\n" + 
+        		"IF_NE: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+
+        System.out.println("Testing: void main() {while(15 < 98) { while(9 == 8){ if(2 != 9){} } if(9 < 2){} }}");
+        eval = "void main() {while(15 < 98) { while(9 == 8){ if(2 != 9){} } if(9 < 2){} }}";
+        result = "repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"repeatLabel1\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel1\n" + 
+        		"GOTO: falseLabel1\n" + 
+        		"trueLabel1\n" + 
+        		"temp0 = 2\n" + 
+        		"temp1 = 9\n" + 
+        		"IF_NE: temp0, temp1, trueLabel2\n" + 
+        		"GOTO: falseLabel2\n" + 
+        		"trueLabel2\n" + 
+        		"falseLabel2\n" + 
+        		"GOTO: repeatLabel1\n" + 
+        		"falseLabel1\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 2\n" + 
+        		"IF_LT: temp0, temp1, trueLabel3\n" + 
+        		"GOTO: falseLabel3\n" + 
+        		"trueLabel3\n" + 
+        		"falseLabel3\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"Error, Got: repeatLabel0\n" + 
+        		"temp0 = 15\n" + 
+        		"temp1 = 98\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"repeatLabel0\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 8\n" + 
+        		"IF_EQ: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"temp0 = 2\n" + 
+        		"temp1 = 9\n" + 
+        		"IF_NE: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"temp0 = 9\n" + 
+        		"temp1 = 2\n" + 
+        		"IF_LT: temp0, temp1, trueLabel0\n" + 
+        		"GOTO: falseLabel0\n" + 
+        		"trueLabel0\n" + 
+        		"falseLabel0\n" + 
+        		"GOTO: repeatLabel0\n" + 
+        		"falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+
+        System.out.println("Testing: void main() {while((17 - (9 + 2)) < 17) {}}");
+        eval = "void main() {while((17 - (9 + 2)) < 17) {}}";
+        result = "";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+*/
         System.out.println("*******************************************");
         System.out.println("End of test suite!!!");
         System.out.println("*******************************************");
