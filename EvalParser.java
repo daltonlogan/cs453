@@ -53,6 +53,21 @@ public class EvalParser
         return root;
     }
 
+    private node prgm_list()
+    {
+        return null;
+    }
+
+    private node func()
+    {
+        return null;
+    }
+
+    private node var_decl()
+    {
+        return null;
+    }
+
     private node stmt_list( ) throws Exception
     {
         node result = new node();
