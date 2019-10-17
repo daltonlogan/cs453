@@ -2,7 +2,7 @@ public class Scanner
 {
     enum TokenType
     {
-        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, EQUALS, NOTEQUALS, ASSIGN, ID, INT, SEMICOLON, LEFTCURLY, RIGHTCURLY, IF, WHILE, VOID, PROGRAM, INVALID
+        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, EQUALS, NOTEQUALS, ASSIGN, ID, INT, SEMICOLON, LEFTCURLY, RIGHTCURLY, IF, WHILE, AND, OR, VOID, PUBLIC, PRIVATE, CLASS, PROGRAM, INVALID
     }
 
     class Token
@@ -97,6 +97,15 @@ public class Scanner
                     break;
                 case "void":
                     aType = TokenType.VOID;
+                    break;
+                case "public":
+                    aType = TokenType.PUBLIC;
+                    break;
+                case "private":
+                    aType = TokenType.PRIVATE;
+                    break;
+                case "class":
+                    aType = TokenType.CLASS;
                     break;
                 default:
                     aType = TokenType.ID;
@@ -193,6 +202,28 @@ public class Scanner
                 stream.deleteCharAt( 0 );
                 aValue += '=';
                 aType = TokenType.EQUALS;
+            }
+        }
+        else if( aChar == '&' )
+        {
+            aValue = String.valueOf( aChar );
+            stream.deleteCharAt( 0 );
+            if ( stream.length() != 0 && stream.charAt( 0 ) == '&' )
+            {
+                stream.deleteCharAt( 0 );
+                aValue += '&';
+                aType = TokenType.AND;
+            }
+        }
+        else if( aChar == '|' )
+        {
+            aValue = String.valueOf( aChar );
+            stream.deleteCharAt( 0 );
+            if ( stream.length() != 0 && stream.charAt( 0 ) == '|' )
+            {
+                stream.deleteCharAt( 0 );
+                aValue += '|';
+                aType = TokenType.OR;
             }
         }
         else if ( aChar == '(' )

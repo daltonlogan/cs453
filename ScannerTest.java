@@ -192,6 +192,38 @@ public class ScannerTest
 
         System.out.println();
 
+        System.out.println( "Starting test 11" );
+        result = test.extractTokens( "public private class" );
+        expected = "|PUBLIC: public||PRIVATE: private||CLASS: class|";
+        if ( ( !result.equals( expected ) ) ) throw new AssertionError();
+        System.out.println( "Passed test 11" );
+
+        System.out.println();
+
+        System.out.println( "Starting test 12" );
+        result = test.extractTokens( "&& ||" );
+        expected = "|AND: &&||OR: |||";
+        if ( ( !result.equals( expected ) ) ) throw new AssertionError();
+        System.out.println( "Passed test 12" );
+
+        System.out.println();
+
+        System.out.println( "Starting test 13" );
+        result = test.extractTokens( "|| &" );
+        expected = "|OR: |||";
+        if ( ( !result.equals( expected ) ) ) throw new AssertionError();
+        System.out.println( "Passed test 13" );
+
+        System.out.println();
+
+        System.out.println( "Starting test 14" );
+        result = test.extractTokens( "&& |" );
+        expected = "|AND: &&|";
+        if ( ( !result.equals( expected ) ) ) throw new AssertionError();
+        System.out.println( "Passed test 14" );
+
+        System.out.println();
+
         System.out.println( "*******************************************" );
         System.out.println( "Passed All Tests" );
         System.out.println( "*******************************************" );
