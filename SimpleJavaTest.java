@@ -189,20 +189,28 @@ public class SimpleJavaTest{
         result = "temp0 = 3\nx = temp0\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
 
-        System.out.println("Testing: void main() {int x = 3; int    y = 12;}");
-        eval = "void main() {int x = 3; int    y = 12;}";
+        System.out.println("Testing: void main() {int x = 3;\n" +
+                "int    y = 12;}}");
+        eval = "void main() {int x = 3;" +
+                "int      y = 12;}";
         result = "temp0 = 3\nx = temp0\ntemp0 = 12\ny = temp0\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
 
-        System.out.println("Testing: void main() {int x = 3; int y = x;}");
-        eval = "void main() {int x = 3; int y = x;}";
+        System.out.println("Testing: void main() {int x = 3;" +
+                "int y = x;}");
+        eval = "void main() {int x = 3;" +
+                "int y = x;}";
         result = "temp0 = 3\n" +
                 "x = temp0\n" +
                 "y = x\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
 
-        System.out.println("Testing: void main() {int x = 3 + 4 * 19 / (2 + 4); int y = x * 15;}");
-        eval = "void main() {int x = 3 + 4 * 19 / (2 + 4); int y = x * 15;}";
+        System.out.println("Testing: void main() {int x = 3 + 4 * 19 / (2 + 4);" +
+
+                "\n\nint y = x * 15;}");
+        eval = "void main() {int x = 3 + 4 * 19 / (2 + 4);" +
+
+                "\n\nint y = x * 15;}";
         result = "temp0 = 3\n" +
                 "temp1 = 4\n" +
                 "temp2 = 19\n" +
@@ -243,8 +251,10 @@ public class SimpleJavaTest{
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
-        System.out.println("Testing: void main() { if (3 <= 4){int zebra12 = 88;    }}");
-        eval = "void main() { if (3 <= 4){int zebra12 = 88;    }}";
+        System.out.println("Testing: void main() { if (3 <= 4){int zebra12 = 88;    " +
+                "\n}}");
+        eval = "void main() { if (3 <= 4){int zebra12 = 88;    " +
+                "\n}}";
         result = "temp0 = 3\n" +
                 "temp1 = 4\n" +
                 "IF_LTE: temp0, temp1, trueLabel0\n" +
@@ -256,8 +266,10 @@ public class SimpleJavaTest{
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
 
 
-        System.out.println("Testing: void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    }}");
-        eval = "void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    }}";
+        System.out.println("Testing: void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    " +
+                "\n}}");
+        eval = "void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    " +
+                "\n}}";
         result = "temp0 = 57\n" +
                 "te3 = temp0\n" +
                 "temp0 = 3\n" +
@@ -271,8 +283,10 @@ public class SimpleJavaTest{
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
 
 
-        System.out.println("Testing: void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    } if(9082 >= te3){}");
-        eval = "void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    } if(9082 >= te3){} }";
+        System.out.println("Testing: void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    " +
+                "\n} if(9082 >= te3){}}");
+        eval = "void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    " +
+                "\n} if(9082 >= te3){}}";
         result = "temp0 = 57\n" +
                 "te3 = temp0\n" +
                 "temp0 = 3\n" +
@@ -290,7 +304,7 @@ public class SimpleJavaTest{
                 "falseLabel1\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
 
-        System.out.println("Testing: void main() {if (3 < 4){if(9082 >= te3){}}");
+        System.out.println("Testing: void main() {if (3 < 4){if(9082 >= te3){}}}");
         eval = "void main() {if (3 < 4){if(9082 >= te3){}}}";
         result = "temp0 = 3\n" +
         		"temp1 = 4\n" +
@@ -306,7 +320,7 @@ public class SimpleJavaTest{
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         System.out.println("Testing: void main() {if (3 < 4){if(9082 >= te3){}} int y4t = 34;}");
-        eval = "void main() {if (3 < 4){if(9082 >= te3){} int y4t = 34;}}";
+        eval = "void main() {if (3 < 4){if(9082 >= te3){}} int y4t = 34;}";
         result = "temp0 = 3\n" +
                 "temp1 = 4\n" +
                 "IF_LT: temp0, temp1, trueLabel0\n" +
@@ -317,13 +331,14 @@ public class SimpleJavaTest{
                 "GOTO: falseLabel1\n" +
                 "trueLabel1\n" +
                 "falseLabel1\n" +
+                "falseLabel0\n" +
                 "temp0 = 34\n" +
-                "y4t = temp0\n" +
-                "falseLabel0\n";
+                "y4t = temp0\n";
+
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         System.out.println("Testing: void main() {while(15 < 98) {}}");
-        eval = "void main() {while(15 < 98) {}}}";
+        eval = "void main() {while(15 < 98) {}}";
         result = "repeatLabel0\n" +
                 "temp0 = 15\n" +
                 "temp1 = 98\n" +
