@@ -125,11 +125,12 @@ public class EvalParser
             match( nextToken, Scanner.TokenType.LEFTCURLY );
 
             node mid = new node( Scanner.TokenType.IF );
+            mid.fLoc = flabelID++;
+            mid.tLoc = tlabelID++;
             node right = stmt_list();
             mid.left = result;
             mid.right = right;
             result = mid;
-            result.loc = mid.left.loc;
 
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTCURLY );
@@ -157,11 +158,13 @@ public class EvalParser
             match( nextToken, Scanner.TokenType.LEFTCURLY );
 
             node mid = new node( Scanner.TokenType.WHILE );
+            mid.fLoc = flabelID++;
+            mid.rLoc = rlabelID++;
+            mid.tLoc = tlabelID++;
             node right = stmt_list();
             mid.left = result;
             mid.right = right;
             result = mid;
-            result.loc = mid.left.loc;
 
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTCURLY );
@@ -194,6 +197,8 @@ public class EvalParser
                 mid.right = right;
                 result = mid;
                 result.loc = tempID++;
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
             }
             else if ( nextToken.tokenType == Scanner.TokenType.NOTEQUALS )
             {
@@ -204,6 +209,8 @@ public class EvalParser
                 mid.right = right;
                 result = mid;
                 result.loc = tempID++;
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
             }
         }
         return result;
@@ -227,6 +234,8 @@ public class EvalParser
                 mid.right = right;
                 result = mid;
                 result.loc = tempID++;
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
             }
             else if ( nextToken.tokenType == Scanner.TokenType.GT )
             {
@@ -237,6 +246,8 @@ public class EvalParser
                 mid.right = right;
                 result = mid;
                 result.loc = tempID++;
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
             }
             else if ( nextToken.tokenType == Scanner.TokenType.LTE )
             {
@@ -247,6 +258,8 @@ public class EvalParser
                 mid.right = right;
                 result = mid;
                 result.loc = tempID++;
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
             }
             else if ( nextToken.tokenType == Scanner.TokenType.GTE )
             {
@@ -257,6 +270,8 @@ public class EvalParser
                 mid.right = right;
                 result = mid;
                 result.loc = tempID++;
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
             }
         }
         return result;
@@ -419,7 +434,7 @@ public class EvalParser
 
             if ( aNode.type == Scanner.TokenType.WHILE )
             {
-                threeAddress += "repeatLabel" + rlabelID + "\n";
+                threeAddress += "repeatLabel" + aNode.rLoc + "\n";
             }
 
             emitTAC( aNode.left );
@@ -452,46 +467,46 @@ public class EvalParser
                     break;
                 case LT:
                     threeAddress += "IF_LT: " + printIdOrLoc( aNode.left ) + ", " +
-                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + tlabelID + "\n";
-                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
+                    threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
+                    threeAddress += "trueLabel" + aNode.tLoc + "\n";
                     break;
                 case GT:
                     threeAddress += "IF_GT: " + printIdOrLoc( aNode.left ) + ", " +
-                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + tlabelID + "\n";
-                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
+                    threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
+                    threeAddress += "trueLabel" + aNode.tLoc + "\n";
                     break;
                 case LTE:
                     threeAddress += "IF_LTE: " + printIdOrLoc( aNode.left ) + ", " +
-                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + tlabelID + "\n";
-                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
+                    threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
+                    threeAddress += "trueLabel" + aNode.tLoc + "\n";
                     break;
                 case GTE:
                     threeAddress += "IF_GTE: " + printIdOrLoc( aNode.left ) + ", " +
-                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + tlabelID + "\n";
-                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
+                    threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
+                    threeAddress += "trueLabel" + aNode.tLoc + "\n";
                     break;
                 case EQUALS:
                     threeAddress += "IF_EQ: " + printIdOrLoc( aNode.left ) + ", " +
-                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + tlabelID + "\n";
-                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
+                    threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
+                    threeAddress += "trueLabel" + aNode.tLoc + "\n";
                     break;
                 case NOTEQUALS:
                     threeAddress += "IF_NE: " + printIdOrLoc( aNode.left ) + ", " +
-                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + tlabelID + "\n";
-                    threeAddress += "GOTO: falseLabel" + flabelID + "\n";
-                    threeAddress += "trueLabel" + tlabelID++ + "\n";
+                            printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
+                    threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
+                    threeAddress += "trueLabel" + aNode.tLoc + "\n";
                     break;
                 case IF:
-                    threeAddress += "falseLabel" + flabelID++ + "\n";
+                    threeAddress += "falseLabel" + aNode.fLoc + "\n";
                     break;
                 case WHILE:
-                    threeAddress += "GOTO: repeatLabel" + rlabelID++ + "\n" +
-                            "falseLabel" + flabelID++ + "\n";
+                    threeAddress += "GOTO: repeatLabel" + aNode.rLoc + "\n" +
+                            "falseLabel" + aNode.fLoc + "\n";
                     break;
             }
         }

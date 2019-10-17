@@ -13,6 +13,9 @@ public class node{
     Scanner.TokenType type = Scanner.TokenType.INVALID;
     String op = "";
     int loc;
+    int rLoc;
+    int fLoc;
+    int tLoc;
 
     node()
     {
