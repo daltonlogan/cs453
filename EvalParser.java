@@ -31,19 +31,29 @@ public class EvalParser
         try
         {
             Scanner.Token nextToken = lookahead();
-            match( nextToken, Scanner.TokenType.VOID );
+            if ( nextToken.tokenType == Scanner.TokenType.PUBLIC )
+            {
+                match( nextToken, Scanner.TokenType.PUBLIC );
+            }
+            else if ( nextToken.tokenType == Scanner.TokenType.PRIVATE )
+            {
+                match( nextToken, Scanner.TokenType.PRIVATE );
+            }
+
+            nextToken = lookahead();
+            match( nextToken, Scanner.TokenType.CLASS );
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.ID );
-            nextToken = lookahead();
-            match( nextToken, Scanner.TokenType.LEFTPAREN );
-            nextToken = lookahead();
-            match( nextToken, Scanner.TokenType.RIGHTPAREN );
+            node programNode = new node(  );
+            root.type = Scanner.TokenType.PROGRAM;
+            node classInit = new node( Scanner.TokenType.ID, nextToken.tokenVal );
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.LEFTCURLY );
-            root = stmt_list();
-            root.type = Scanner.TokenType.PROGRAM;
+            classInit.stmts.add( prgm_list() );
+            programNode.stmts.add( classInit );
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTCURLY );
+            root.stmts.add( programNode );
         } catch ( Exception e )
         {
             System.out.println( "ERROR: Syntax error - " + e.getMessage() );
@@ -53,19 +63,77 @@ public class EvalParser
         return root;
     }
 
-    private node prgm_list()
+    private node prgm_list( ) throws Exception
     {
-        return null;
+        Scanner.Token nextToken = lookahead();
+        if ( nextToken == null )
+        {
+            return null;
+        }
+
+        node result = new node();
+        node temp = new node();
+
+        switch ( nextToken.tokenType )
+        {
+            case INT:
+                temp = var_decl();
+                break;
+            case VOID:
+                temp = func();
+                break;
+        }
+
+        nextToken = lookahead();
+
+        while ( temp != null )
+        {
+            result.stmts.add( temp );
+
+            switch ( nextToken.tokenType )
+            {
+                case INT:
+                    temp = var_decl();
+                    break;
+                case VOID:
+                    temp = func();
+                    break;
+                default:
+                    temp = null;
+                    break;
+            }
+        }
+        return result;
     }
 
-    private node func()
+    private node func( ) throws Exception
     {
-        return null;
+        Scanner.Token nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.VOID );
+        nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.ID );
+        nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.LEFTPAREN );
+        nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.RIGHTPAREN );
+        nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.LEFTCURLY );
+        node result = stmt_list();
+        nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.RIGHTCURLY );
+
+        return result;
     }
 
-    private node var_decl()
+    private node var_decl( ) throws Exception
     {
-        return null;
+        Scanner.Token nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.INT );
+        nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.ID );
+        node aNode = new node( Scanner.TokenType.ID, nextToken.tokenVal );
+
+        return aNode;
     }
 
     private node stmt_list( ) throws Exception
@@ -91,6 +159,7 @@ public class EvalParser
         switch ( nextToken.tokenType )
         {
             case INT:
+            case ID:
                 return assignment();
             case IF:
             case WHILE:
@@ -99,21 +168,44 @@ public class EvalParser
         return null;
     }
 
-    private node assignment( )
+    private node assignment( ) throws Exception
     {
         Scanner.Token nextToken = lookahead();
-        match( nextToken, Scanner.TokenType.INT );
-        node result = A();
-        nextToken = lookahead();
-        match( nextToken, Scanner.TokenType.ASSIGN );
-        node mid = new node( Scanner.TokenType.ASSIGN );
-        node right = E();
-        mid.left = result;
-        mid.right = right;
-        result = mid;
-        result.loc = mid.left.loc;
-        nextToken = lookahead();
-        match( nextToken, Scanner.TokenType.SEMICOLON );
+        node result = new node(  );
+
+        if( nextToken != null && nextToken.tokenType == Scanner.TokenType.INT )
+        {
+            result = var_decl();
+
+            nextToken = lookahead();
+            match( nextToken, Scanner.TokenType.ASSIGN );
+            node mid = new node( Scanner.TokenType.ASSIGN );
+            node right = E();
+            mid.left = result;
+            mid.right = right;
+            result = mid;
+            result.loc = mid.left.loc;
+            nextToken = lookahead();
+            match( nextToken, Scanner.TokenType.SEMICOLON );
+
+        }
+        else if( nextToken != null && nextToken.tokenType == Scanner.TokenType.ID )
+        {
+            match( nextToken, Scanner.TokenType.ID );
+
+            result = new node( Scanner.TokenType.ID, nextToken.tokenVal );
+
+            nextToken = lookahead();
+            match( nextToken, Scanner.TokenType.ASSIGN );
+            node mid = new node( Scanner.TokenType.ASSIGN );
+            node right = E();
+            mid.left = result;
+            mid.right = right;
+            result = mid;
+            result.loc = mid.left.loc;
+            nextToken = lookahead();
+            match( nextToken, Scanner.TokenType.SEMICOLON );
+        }
 
         tempID = 0;
 
@@ -123,10 +215,9 @@ public class EvalParser
     private node control_flow( ) throws Exception
     {
         Scanner.Token nextToken = lookahead();
-        node result = new node();
+        node result;
         if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.IF )
         {
-//            if ( expr ) { stmt_list } |
             match( nextToken, Scanner.TokenType.IF );
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.LEFTPAREN );
@@ -533,7 +624,7 @@ public class EvalParser
         return threeAddress;
     }
 
-    private String printIdOrLoc(node aNode )
+    private String printIdOrLoc( node aNode )
     {
         if( aNode.type == Scanner.TokenType.ID )
         {
