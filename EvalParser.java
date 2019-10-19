@@ -78,22 +78,25 @@ public class EvalParser
         {
             case INT:
                 temp = var_decl();
+                nextToken = lookahead();
+                match( nextToken, Scanner.TokenType.SEMICOLON );
                 break;
             case VOID:
                 temp = func();
                 break;
         }
 
-        nextToken = lookahead();
-
         while ( temp != null )
         {
+            nextToken = lookahead();
             result.stmts.add( temp );
 
             switch ( nextToken.tokenType )
             {
                 case INT:
                     temp = var_decl();
+                    nextToken = lookahead();
+                    match( nextToken, Scanner.TokenType.SEMICOLON );
                     break;
                 case VOID:
                     temp = func();
@@ -178,6 +181,13 @@ public class EvalParser
             result = var_decl();
 
             nextToken = lookahead();
+
+            if( nextToken.tokenType == Scanner.TokenType.SEMICOLON )
+            {
+                match( nextToken, Scanner.TokenType.SEMICOLON );
+                return result;
+            }
+
             match( nextToken, Scanner.TokenType.ASSIGN );
             node mid = new node( Scanner.TokenType.ASSIGN );
             node right = E();
