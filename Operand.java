@@ -22,4 +22,12 @@ public class Operand{
 		
 		return strValue;
 	}
+	
+	public boolean isInt() {
+		return isInt;
+	}
+	
+	public boolean isString() {
+		return isString;
+	}
 }
