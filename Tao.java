@@ -23,12 +23,6 @@ public class Tao { // Three Address Object
 	Operand src2;
 	Operand destination;
 	
-	//done num, ID, int
-	//done labels, goto
-	//done plus, minus, mult, div
-	//lt, lte, gt, gte, equals, notequals
-	//done assign
-	
 	/*
 	 * This method should never be called, it is here for testing
 	 */
@@ -121,12 +115,12 @@ public class Tao { // Three Address Object
 			case NOTEQUALS:
 				ans = "IF_NE: " + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
-			case IF:
+			case IF: // destination for IF statement should be where it goes if true
 				ans = "falselabel" + this.destination.toString() + "\n";
 				break;
-/*			case WHILE:
-				ans = "GOTO: repeatLabel" + 
-				break;*/
+			case WHILE: //src1 is the repeating label while the statement continues to be true and the destination is for where it goes after false
+				ans = "GOTO: repeatLabel" + this.src1.toString() + ", " + this.destination.toString() + "\n";
+ 				break;
 			default:
 				ans = "ERROR there is no toString for this operation: " + op.name();
 		}
