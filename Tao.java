@@ -98,16 +98,16 @@ public class Tao { // Three Address Object
 				ans = this.destination.toString() + " = " + this.src1.toString() + " / " + this.src2.toString() + "\n";
 				break;
 			case LT:
-				ans = "IF_LT" + this.src1.toString() + ", " + this.src2.toString() + ", " + this.destination.toString() + "\n";
+				ans = "IF_LT" + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
 			case GT:
-				ans = "IF_GT" + this.src1.toString() + ", " + this.src2.toString() + ", " + this.destination.toString() + "\n";
+				ans = "IF_GT" + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
 			case LTE:
-				ans = "IF_LTE" + this.src1.toString() + ", " + this.src2.toString() + ", " + this.destination.toString() + "\n";
+				ans = "IF_LTE" + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
 			case GTE:
-				ans = "IF_GTE" + this.src1.toString() + ", " + this.src2.toString() + ", " + this.destination.toString() + "\n";
+				ans = "IF_GTE" + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
 			case LABEL:
 				ans = this.src1.toString() + "\n";
@@ -115,6 +115,18 @@ public class Tao { // Three Address Object
 			case GOTO:
 				ans = this.destination.toString() + "\n";
 				break;
+			case EQUALS:
+				ans = "IF_EQ: " + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
+				break;
+			case NOTEQUALS:
+				ans = "IF_NE: " + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
+				break;
+			case IF:
+				ans = "falselabel" + this.destination.toString() + "\n";
+				break;
+/*			case WHILE:
+				ans = "GOTO: repeatLabel" + 
+				break;*/
 			default:
 				ans = "ERROR there is no toString for this operation: " + op.name();
 		}
