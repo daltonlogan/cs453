@@ -8,7 +8,6 @@ public class EvalParser
     int tempID = 0;
     String threeAddressResult = "";
     ArrayList< Integer > IDs = new ArrayList< Integer >();
-    ArrayList< node > nodes = new ArrayList< node >();
     node root = new node( Scanner.TokenType.PROGRAM );
     private int parenCounter = 0;
     boolean expressionInside;
@@ -229,20 +228,31 @@ public class EvalParser
         if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.IF )
         {
             match( nextToken, Scanner.TokenType.IF );
+            node mid = new node( Scanner.TokenType.IF );
+
+            // Set labels for IF node
+            mid.fLoc = flabelID;
+            mid.tLoc = tlabelID;
+
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.LEFTPAREN );
-            result = A();
+
+            // Evaluate inside expression
+            result = boolCompare();
+            if( result == null )
+            {
+                throw new Exception( "No expression inside if" );
+            }
+
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTPAREN );
             nextToken = lookahead();
 
+            // Reset temp ID
             tempID = 0;
 
             match( nextToken, Scanner.TokenType.LEFTCURLY );
 
-            node mid = new node( Scanner.TokenType.IF );
-            mid.fLoc = flabelID++;
-            mid.tLoc = tlabelID++;
             node right = stmt_list();
             mid.left = result;
             mid.right = right;
@@ -250,17 +260,21 @@ public class EvalParser
 
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTCURLY );
-
-
-//            threeAddressResult += "falseLabel" + flabelID + "\n";
         }
         else if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.WHILE )
         {
-//            while ( expr ) { stmt_list }
             match( nextToken, Scanner.TokenType.WHILE );
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.LEFTPAREN );
-            result = A();
+            node mid = new node( Scanner.TokenType.WHILE );
+
+            // Set labels for WHILE node
+            mid.fLoc = flabelID;
+            mid.tLoc = tlabelID;
+            mid.rLoc = rlabelID++;
+
+            // Evaluate inside expression
+            result = boolCompare();
             if( result == null )
             {
                 throw new Exception( "No expression inside while" );
@@ -269,14 +283,11 @@ public class EvalParser
             match( nextToken, Scanner.TokenType.RIGHTPAREN );
             nextToken = lookahead();
 
+            // Reset temp ID
             tempID = 0;
 
             match( nextToken, Scanner.TokenType.LEFTCURLY );
 
-            node mid = new node( Scanner.TokenType.WHILE );
-            mid.fLoc = flabelID++;
-            mid.rLoc = rlabelID++;
-            mid.tLoc = tlabelID++;
             node right = stmt_list();
             mid.left = result;
             mid.right = right;
@@ -284,8 +295,6 @@ public class EvalParser
 
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.RIGHTCURLY );
-//            threeAddressResult += "GOTO: repeatLabel" + rlabelID + "\n";
-//            threeAddressResult += "falseLabel" + flabelID + "\n";
         }
         else
         {
@@ -294,10 +303,56 @@ public class EvalParser
         return result;
     }
 
+    private node boolCompare()
+    {
+        node result = A();
+
+        while ( lookahead().tokenType == Scanner.TokenType.AND || lookahead().tokenType == Scanner.TokenType.OR )
+        {
+            Scanner.Token nextToken = lookahead();
+
+            if ( nextToken.tokenType == Scanner.TokenType.AND )
+            {
+                match( nextToken, Scanner.TokenType.AND );
+                node mid = new node( Scanner.TokenType.AND );
+                mid.left = result;
+                mid.right = A();
+
+                // Set children labels
+                mid.left.tLoc = mid.right.tLoc;
+                mid.left.fLoc = mid.fLoc;
+                mid.right.tLoc = mid.tLoc;
+                mid.right.fLoc = mid.fLoc;
+
+                // Set AND labels
+                result = mid;
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
+            }
+            else if ( nextToken.tokenType == Scanner.TokenType.OR )
+            {
+                match( nextToken, Scanner.TokenType.OR );
+                node mid = new node( Scanner.TokenType.OR );
+                mid.left = result;
+                mid.right = A();
+
+                // Set children labels
+                mid.left.tLoc = mid.tLoc;
+                mid.left.fLoc = mid.right.loc;
+                mid.right.tLoc = mid.tLoc;
+                mid.right.fLoc = mid.fLoc;
+
+                // Set OR labels
+                result = mid;
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
+            }
+        }
+        return result;
+    }
 
     private node A( )
     {
-
         node result = B();
 
         while ( lookahead().tokenType == Scanner.TokenType.EQUALS || lookahead().tokenType == Scanner.TokenType.NOTEQUALS )
@@ -312,9 +367,8 @@ public class EvalParser
                 mid.left = result;
                 mid.right = right;
                 result = mid;
-                result.loc = tempID++;
-                result.fLoc = flabelID;
-                result.tLoc = tlabelID;
+                result.fLoc = flabelID++;
+                result.tLoc = tlabelID++;
             }
             else if ( nextToken.tokenType == Scanner.TokenType.NOTEQUALS )
             {
@@ -324,9 +378,8 @@ public class EvalParser
                 mid.left = result;
                 mid.right = right;
                 result = mid;
-                result.loc = tempID++;
-                result.fLoc = flabelID;
-                result.tLoc = tlabelID;
+                result.fLoc = flabelID++;
+                result.tLoc = tlabelID++;
             }
         }
         return result;
@@ -349,9 +402,8 @@ public class EvalParser
                 mid.left = result;
                 mid.right = right;
                 result = mid;
-                result.loc = tempID++;
-                result.fLoc = flabelID;
-                result.tLoc = tlabelID;
+                result.fLoc = flabelID++;
+                result.tLoc = tlabelID++;
             }
             else if ( nextToken.tokenType == Scanner.TokenType.GT )
             {
@@ -361,9 +413,8 @@ public class EvalParser
                 mid.left = result;
                 mid.right = right;
                 result = mid;
-                result.loc = tempID++;
-                result.fLoc = flabelID;
-                result.tLoc = tlabelID;
+                result.fLoc = flabelID++;
+                result.tLoc = tlabelID++;
             }
             else if ( nextToken.tokenType == Scanner.TokenType.LTE )
             {
@@ -373,9 +424,8 @@ public class EvalParser
                 mid.left = result;
                 mid.right = right;
                 result = mid;
-                result.loc = tempID++;
-                result.fLoc = flabelID;
-                result.tLoc = tlabelID;
+                result.fLoc = flabelID++;
+                result.tLoc = tlabelID++;
             }
             else if ( nextToken.tokenType == Scanner.TokenType.GTE )
             {
@@ -385,9 +435,8 @@ public class EvalParser
                 mid.left = result;
                 mid.right = right;
                 result = mid;
-                result.loc = tempID++;
-                result.fLoc = flabelID;
-                result.tLoc = tlabelID;
+                result.fLoc = flabelID++;
+                result.tLoc = tlabelID++;
             }
         }
         return result;
@@ -466,7 +515,7 @@ public class EvalParser
             {
                 parenCounter++;
                 match( nextToken, Scanner.TokenType.LEFTPAREN );
-                aNode = A();
+                aNode = boolCompare();
 
                 nextToken = lookahead();
                 if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.RIGHTPAREN )
@@ -480,7 +529,6 @@ public class EvalParser
                 }
                 return aNode;
             }
-
 
             if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.NUM )
             {

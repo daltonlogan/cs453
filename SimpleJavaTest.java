@@ -7,15 +7,15 @@ public class SimpleJavaTest{
 
         String eval = "public class test { void blarg() {} }";
         String result = "";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "public class test { void main() {int x = 3 + 2;} }";
         result = "temp0 = 3\ntemp1 = 2\ntemp2 = temp0 + temp1\nx = temp2\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test { void main() {int x = 4 / 2;} }";
         result = "temp0 = 4\ntemp1 = 2\ntemp2 = temp0 / temp1\nx = temp2\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test { void main() { int x = 12; if(3 < 6) { int y = 3; } } }";
         result = "temp0 = 12\n"+
@@ -28,7 +28,7 @@ public class SimpleJavaTest{
                 "temp0 = 3\n"+
                 "y = temp0\n"+
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "public class test {void main() { int x = 3; while(3 < 2) { int x = 4;} } }";
         result = "temp0 = 3\n"+
@@ -43,7 +43,7 @@ public class SimpleJavaTest{
                 "x = temp0\n"+
                 "GOTO: repeatLabel0\n"+
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void blarg() {" +
                 "if( 2 + 3 - 2 < 2) {" +
@@ -66,7 +66,7 @@ public class SimpleJavaTest{
                 "temp4 = temp0 + temp3\n" +
                 "x = temp4\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() {if(5 == 5){int x = 5;}}}";
         result = "temp0 = 5\n" +
@@ -77,7 +77,7 @@ public class SimpleJavaTest{
                 "temp0 = 5\n" +
                 "x = temp0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "public class test {void main() {if(2 + 3 == 5){int x = 5;}}}";
         result ="temp0 = 2\n" +
@@ -90,7 +90,7 @@ public class SimpleJavaTest{
                 "temp0 = 5\n" +
                 "x = temp0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class t {void main() {if(2 + 3 == 1 + 4){int x = 5;}}}";
         result ="temp0 = 2\n" +
@@ -105,7 +105,7 @@ public class SimpleJavaTest{
                 "temp0 = 5\n" +
                 "x = temp0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() {if(2 + 3 == 1 + 4){int x = 5;} if( 2 < 3 ) {int a = 1;}}}";
         result ="temp0 = 2\n" +
@@ -128,7 +128,7 @@ public class SimpleJavaTest{
                 "temp0 = 1\n" +
                 "a = temp0\n" +
                 "falseLabel1\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() {if(2 + 3 != 1 + 4){int x = 1;}}}";
         result ="temp0 = 2\n" +
@@ -143,7 +143,7 @@ public class SimpleJavaTest{
                 "temp0 = 1\n" +
                 "x = temp0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() {if(2 >= 3){int x = 5 - 5;}}}";
         result ="temp0 = 2\n" +
@@ -156,7 +156,7 @@ public class SimpleJavaTest{
                 "temp2 = temp0 - temp1\n" +
                 "x = temp2\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() {while(2 != 3){int x = 5 + 5 * 5;}}}";
         result ="repeatLabel0\n" +
@@ -173,7 +173,7 @@ public class SimpleJavaTest{
                 "x = temp4\n" +
                 "GOTO: repeatLabel0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         System.out.println("*******************************************");
         System.out.println("Starting full test suite!!!");
@@ -182,18 +182,18 @@ public class SimpleJavaTest{
         eval = "private class test {void main() {}}";
         System.out.println("Testing: " + eval);
         result = "";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() {int x = 3;}}";
         System.out.println("Testing: " + eval);
         result = "temp0 = 3\nx = temp0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() {int x = 3;" +
                 "\nint      y = 12;}}";
         System.out.println("Testing: " + eval);
         result = "temp0 = 3\nx = temp0\ntemp0 = 12\ny = temp0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() {int x = 3;" +
                 "\nint y = x;}}";
@@ -201,7 +201,7 @@ public class SimpleJavaTest{
         result = "temp0 = 3\n" +
                 "x = temp0\n" +
                 "y = x\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() {int x = 3 + 4 * 19 / (2 + 4);" +
                 "\nint y = x * 15;}}";
@@ -219,7 +219,7 @@ public class SimpleJavaTest{
                 "temp0 = 15\n" +
                 "temp1 = x * temp0\n" +
                 "y = temp1\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "public class test {void main() {int x = 3; int yooo = 12; int t11 = 15; int names23 = 9; int h2t4y78e = 43;}}";
         System.out.println("Testing: " + eval);
@@ -233,7 +233,7 @@ public class SimpleJavaTest{
                 "names23 = temp0\n" +
                 "temp0 = 43\n" +
                 "h2t4y78e = temp0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "public class test {void main() { if (3 < 4){}}}";
         System.out.println("Testing: " + eval);
@@ -243,7 +243,7 @@ public class SimpleJavaTest{
                 "GOTO: falseLabel0\n" +
                 "trueLabel0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "private class test {void main() { if (3 <= 4){int zebra12 = 88;    " +
@@ -257,7 +257,7 @@ public class SimpleJavaTest{
                 "temp0 = 88\n" +
                 "zebra12 = temp0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         eval = "private class test {void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    " +
                 "\n}}}";
@@ -272,7 +272,7 @@ public class SimpleJavaTest{
                 "temp0 = 88\n" +
                 "zebra12 = temp0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "private class test {void main() { int te3 = 57; if (3 < 4){int zebra12 = 88;    " +
@@ -293,7 +293,7 @@ public class SimpleJavaTest{
                 "GOTO: falseLabel1\n" +
                 "trueLabel1\n" +
                 "falseLabel1\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "private class test {void main() {if (3 < 4){if(9082 >= te3){}}}}";
@@ -309,7 +309,7 @@ public class SimpleJavaTest{
         		"trueLabel1\n" +
         		"falseLabel1\n" +
         		"falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "private class test {void main() {if (3 < 4){if(9082 >= te3){}} int y4t = 34;}}";
@@ -327,7 +327,7 @@ public class SimpleJavaTest{
                 "falseLabel0\n" +
                 "temp0 = 34\n" +
                 "y4t = temp0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "private class test {void main() {while(15 < 98) {}}}";
@@ -340,7 +340,7 @@ public class SimpleJavaTest{
                 "trueLabel0\n" +
                 "GOTO: repeatLabel0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "public class test {void main() {while(15 < 98) {int yeeee7 = 44;}}}";
@@ -355,7 +355,7 @@ public class SimpleJavaTest{
                 "yeeee7 = temp0\n" +
                 "GOTO: repeatLabel0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "public class test {void main() {while(15 < 98) { if(9 == 8){} }}}";
@@ -374,7 +374,7 @@ public class SimpleJavaTest{
         		"falseLabel1\n" +
         		"GOTO: repeatLabel0\n" +
         		"falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "private class test {void main() {while(15 < 98) { if(9 == 8){int z = 98;} }}}";
@@ -395,7 +395,7 @@ public class SimpleJavaTest{
         		"falseLabel1\n" +
         		"GOTO: repeatLabel0\n" +
         		"falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "public class test {void main() {while(15 < 98) { while(9 == 8){}}}}";
@@ -416,7 +416,7 @@ public class SimpleJavaTest{
         		"falseLabel1\n" +
         		"GOTO: repeatLabel0\n" +
         		"falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "public class test {void main() {while(15 < 98) { while(9 == 8){ if(2 != 9){} }}}}";
@@ -443,7 +443,7 @@ public class SimpleJavaTest{
         		"falseLabel1\n" +
         		"GOTO: repeatLabel0\n" +
         		"falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "private class test {void main() {while(15 < 98) { while(9 == 8){ if(2 != 9){} } if(9 < 2){} }}}";
@@ -476,7 +476,7 @@ public class SimpleJavaTest{
         		"falseLabel3\n" +
         		"GOTO: repeatLabel0\n" +
         		"falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "private class test {void main() {while((17 - (9 + 2)) < 17) {}}}";
@@ -493,7 +493,7 @@ public class SimpleJavaTest{
                 "trueLabel0\n" +
                 "GOTO: repeatLabel0\n" +
                 "falseLabel0\n";
-        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!");
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
 
         eval = "private class test {int x; void first() {int y = 1; int z = 2;}}";
@@ -620,6 +620,24 @@ public class SimpleJavaTest{
                 "d = temp0\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
+        eval = "public class test {int x; int y; void mainEntry(){ int x; x = 3; if(2 > 3 && 5 < 4){ x = 42; }}}";
+        System.out.println( "Testing: " + eval );
+        result = "temp0 = 3\n"+
+                "x = temp0\n"+
+                "temp0 = 2\n"+
+                "temp1 = 3\n"+
+                "IF_GT: temp0, temp1, trueLabel1\n"+
+                "GOTO: falseLabel0\n"+
+                "trueLabel1\n"+
+                "temp2 = 5\n"+
+                "temp3 = 4\n"+
+                "IF_LT: temp2, temp3, trueLabel0\n"+
+                "GOTO: falseLabel0\n"+
+                "trueLabel0\n"+
+                "temp0 = 42\n"+
+                "x = temp0\n"+
+                "falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
         System.out.println("*******************************************");
         System.out.println("End of test suite!!!");
