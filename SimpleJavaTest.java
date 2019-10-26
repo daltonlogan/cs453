@@ -639,6 +639,119 @@ public class SimpleJavaTest{
                 "falseLabel0\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
+        eval = "public class test {int x; int y; void mainEntry(){ int x; x = 3; if(2 > 3 && 5 == 5){ x = 42; y = 12; }}}";
+        System.out.println( "Testing: " + eval );
+        result = "temp0 = 3\n"+
+                "x = temp0\n"+
+                "temp0 = 2\n"+
+                "temp1 = 3\n"+
+                "IF_GT: temp0, temp1, trueLabel1\n"+
+                "GOTO: falseLabel0\n"+
+                "trueLabel1\n"+
+                "temp2 = 5\n"+
+                "temp3 = 5\n"+
+                "IF_EQ: temp2, temp3, trueLabel0\n"+
+                "GOTO: falseLabel0\n"+
+                "trueLabel0\n"+
+                "temp0 = 42\n"+
+                "x = temp0\n"+
+                "temp0 = 12\n"+
+                "y = temp0\n"+
+                "falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
+
+        eval = "public class test { void mainEntry() { int res = 14; if( 2 < 3 || 9 < 10 ) { res = 42; } res = res + 1; } }";
+        System.out.println( "Testing: " + eval );
+        result ="temp0 = 14\n" +
+                "res = temp0\n" +
+                "temp0 = 2\n" +
+                "temp1 = 3\n" +
+                "IF_LT: temp0, temp1, trueLabel0\n" +
+                "GOTO: falseLabel1\n" +
+                "falseLabel1\n" +
+                "temp2 = 9\n" +
+                "temp3 = 10\n" +
+                "IF_LT: temp2, temp3, trueLabel0\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel0\n" +
+                "temp0 = 42\n" +
+                "res = temp0\n" +
+                "falseLabel0\n" +
+                "temp0 = 1\n" +
+                "temp1 = res + temp0\n" +
+                "res = temp1\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
+
+
+        eval = "public class multiple { void main() { if( 2 < 3 && 3 != 4 ) { int x = 1; } } }";
+        System.out.println( "Testing: " + eval );
+        result = "temp0 = 2\n" +
+                "temp1 = 3\n" +
+                "IF_LT: temp0, temp1, trueLabel1\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel1\n" +
+                "temp2 = 3\n" +
+                "temp3 = 4\n" +
+                "IF_NE: temp2, temp3, trueLabel0\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel0\n" +
+                "temp0 = 1\n" +
+                "x = temp0\n" +
+                "falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
+
+        eval = "public class test { void main() { int x = 0; int y = 0; while( x >= 3 || y < 5 ) { x = x + 1; y = y + 2; } int a = 2; } }";
+        System.out.println( "Testing: " + eval );
+        result = "temp0 = 0\n" +
+                "x = temp0\n" +
+                "temp0 = 0\n" +
+                "y = temp0\n" +
+                "repeatLabel0\n" +
+                "temp0 = 3\n" +
+                "IF_GTE: x, temp0, trueLabel0\n" +
+                "GOTO: falseLabel1\n" +
+                "falseLabel1\n" +
+                "temp1 = 5\n" +
+                "IF_LT: y, temp1, trueLabel0\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel0\n" +
+                "temp0 = 1\n" +
+                "temp1 = x + temp0\n" +
+                "x = temp1\n" +
+                "temp0 = 2\n" +
+                "temp1 = y + temp0\n" +
+                "y = temp1\n" +
+                "GOTO: repeatLabel0\n" +
+                "falseLabel0\n" +
+                "temp0 = 2\n" +
+                "a = temp0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
+
+        eval = "public class test { void main() { if( 17 - (9 + 2) < 20 || 5 + 5 * 2 == 15 ) { int a = 0; } } }";
+        System.out.println( "Testing: " + eval );
+        result = "temp0 = 17\n" +
+                "temp1 = 9\n" +
+                "temp2 = 2\n" +
+                "temp3 = temp1 + temp2\n" +
+                "temp4 = temp0 - temp3\n" +
+                "temp5 = 20\n" +
+                "IF_LT: temp4, temp5, trueLabel0\n" +
+                "GOTO: falseLabel1\n" +
+                "falseLabel1\n" +
+                "temp6 = 5\n" +
+                "temp7 = 5\n" +
+                "temp8 = 2\n" +
+                "temp9 = temp7 * temp8\n" +
+                "temp10 = temp6 + temp9\n" +
+                "temp11 = 15\n" +
+                "IF_EQ: temp10, temp11, trueLabel0\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel0\n" +
+                "temp0 = 0\n" +
+                "a = temp0\n" +
+                "falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
+
         System.out.println("*******************************************");
         System.out.println("End of test suite!!!");
         System.out.println("*******************************************");
