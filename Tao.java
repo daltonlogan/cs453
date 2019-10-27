@@ -14,7 +14,7 @@
  */
 public class Tao { // Three Address Object
 	enum Operation{
-		NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, EQUALS, NOTEQUALS, ASSIGN, ID, INT, SEMICOLON, LEFTCURLY, RIGHTCURLY, IF, WHILE, AND, OR, VOID, PUBLIC, PRIVATE, CLASS, PROGRAM, INVALID, LABEL, GOTO
+		NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, EQUALS, NOTEQUALS, ASSIGN, ID, INT, SEMICOLON, LEFTCURLY, RIGHTCURLY, IF, WHILE, START_WHILE, AND, OR, VOID, PUBLIC, PRIVATE, CLASS, PROGRAM, INVALID, LABEL, GOTO
 	}
 	
 	/** Values for Tao class */
@@ -37,6 +37,11 @@ public class Tao { // Three Address Object
 	 */
 	Tao(Operation oper, Operand value){
 		if(oper == Operation.LABEL) {
+			op = oper;
+			src1 = value;
+		}
+		else if(oper == Operation.START_WHILE)
+		{
 			op = oper;
 			src1 = value;
 		}
@@ -79,6 +84,9 @@ public class Tao { // Three Address Object
 			case ASSIGN:
 				ans = this.destination.toString() + " = " + this.src1.toString() + "\n";
 				break;
+			case NUM:
+				ans = destination.toString() + " = " + src1.toString() + "\n";
+				break;
 			case PLUS:
 				ans = this.destination.toString() + " = " + this.src1.toString() + " + " + this.src2.toString() + "\n";
 				break;
@@ -92,22 +100,22 @@ public class Tao { // Three Address Object
 				ans = this.destination.toString() + " = " + this.src1.toString() + " / " + this.src2.toString() + "\n";
 				break;
 			case LT:
-				ans = "IF_LT" + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
+				ans = "IF_LT: " + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
 			case GT:
-				ans = "IF_GT" + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
+				ans = "IF_GT: " + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
 			case LTE:
-				ans = "IF_LTE" + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
+				ans = "IF_LTE: " + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
 			case GTE:
-				ans = "IF_GTE" + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
+				ans = "IF_GTE: " + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
 			case LABEL:
 				ans = this.src1.toString() + "\n";
 				break;
 			case GOTO:
-				ans = this.destination.toString() + "\n";
+				ans = "GOTO: falseLabel" + this.destination.toString() + "\n";
 				break;
 			case EQUALS:
 				ans = "IF_EQ: " + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
@@ -116,10 +124,13 @@ public class Tao { // Three Address Object
 				ans = "IF_NE: " + this.src1.toString() + ", " + this.src2.toString() + ", " + "trueLabel" + this.destination.toString() + "\n";
 				break;
 			case IF: // destination for IF statement should be where it goes if true
-				ans = "falselabel" + this.destination.toString() + "\n";
+				ans = "falseLabel" + this.destination.toString() + "\n";
+				break;
+			case START_WHILE:
+				ans = "repeatLabel" + src1.toString() + "\n";
 				break;
 			case WHILE: //src1 is the repeating label while the statement continues to be true and the destination is for where it goes after false
-				ans = "GOTO: repeatLabel" + this.src1.toString() + ", " + this.destination.toString() + "\n";
+				ans = "GOTO: repeatLabel" + this.src1.toString() + "\n" + "falseLabel" + this.destination.toString() + "\n";
  				break;
 			default:
 				ans = "ERROR there is no toString for this operation: " + op.name();
