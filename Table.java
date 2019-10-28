@@ -1,11 +1,11 @@
 import java.util.Hashtable;
 
-public class SymbolTable
+public class Table
 {
     private Hashtable< String, Symbol > table;
-    private SymbolTable prev;
+    private Table prev;
 
-    public SymbolTable( SymbolTable p )
+    public Table( Table p )
     {
         table = new Hashtable();
         prev = p;
@@ -20,7 +20,7 @@ public class SymbolTable
     {
         String key = aToken.tokenVal;
 
-        for ( SymbolTable e = this; e != null; e = e.prev )
+        for ( Table e = this; e != null; e = e.prev )
         {
             Symbol found = e.table.get( key );
             if ( found != null )

@@ -15,8 +15,8 @@ public class EvalParser
     private int flabelID = 0; // Label id for false
     private int rlabelID = 0; // Label id for loops
 
-    private SymbolTable globalTable = new SymbolTable( null );
-    private SymbolTable localTable = new SymbolTable( null );
+    private Table globalTable = new Table( null );
+    private Table localTable = new Table( null );
 
 
     /***************** Simple Expression Evaluator ***********************/
