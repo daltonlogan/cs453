@@ -2,7 +2,7 @@ public class Symbol
 {
     enum SymbolType
     {
-        LEXEME, ID, INT
+        LEXEME, ID, INT, FUNC
     }
     private SymbolType type;
 

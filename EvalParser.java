@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 public class EvalParser
 {
@@ -16,8 +15,8 @@ public class EvalParser
     private int flabelID = 0; // Label id for false
     private int rlabelID = 0; // Label id for loops
 
-    private TreeMap globalTable = new TreeMap(  );
-    private TreeMap localTable = new TreeMap(  );
+    private SymbolTable globalTable = new SymbolTable( null );
+    private SymbolTable localTable = new SymbolTable( null );
 
 
     /***************** Simple Expression Evaluator ***********************/
@@ -76,7 +75,7 @@ public class EvalParser
         switch ( nextToken.tokenType )
         {
             case INT:
-                temp = var_decl();
+                temp = var_decl( true );
                 nextToken = lookahead();
                 match( nextToken, Scanner.TokenType.SEMICOLON );
                 break;
@@ -93,7 +92,7 @@ public class EvalParser
             switch ( nextToken.tokenType )
             {
                 case INT:
-                    temp = var_decl();
+                    temp = var_decl( true );
                     nextToken = lookahead();
                     match( nextToken, Scanner.TokenType.SEMICOLON );
                     break;
@@ -114,6 +113,19 @@ public class EvalParser
         match( nextToken, Scanner.TokenType.VOID );
         nextToken = lookahead();
         match( nextToken, Scanner.TokenType.ID );
+
+        if( globalTable.find( nextToken ) == null )
+        {
+            Symbol aFunc = new Symbol();
+            aFunc.setType( Symbol.SymbolType.FUNC );
+            globalTable.add( nextToken.tokenVal, aFunc );
+        }
+        else
+        {
+            System.out.println( "Function " + nextToken.tokenVal + " already defined" );
+            //throw new Exception( "Variable " + nextToken.tokenVal + " already defined" );
+        }
+
         nextToken = lookahead();
         match( nextToken, Scanner.TokenType.LEFTPAREN );
         nextToken = lookahead();
@@ -127,12 +139,42 @@ public class EvalParser
         return result;
     }
 
-    private node var_decl( ) throws Exception
+    private node var_decl( boolean isGlobal ) throws Exception
     {
         Scanner.Token nextToken = lookahead();
         match( nextToken, Scanner.TokenType.INT );
         nextToken = lookahead();
         match( nextToken, Scanner.TokenType.ID );
+
+        if( isGlobal )
+        {
+            if( globalTable.find( nextToken ) == null )
+            {
+                Symbol s = new Symbol();
+                s.setType( Symbol.SymbolType.LEXEME );
+                globalTable.add( nextToken.tokenVal, s );
+            }
+            else
+            {
+                System.out.println( "Variable " + nextToken.tokenVal + " already defined" );
+                //throw new Exception( "Variable " + nextToken.tokenVal + " already defined" );
+            }
+        }
+        else
+        {
+            if( localTable.find( nextToken ) == null )
+            {
+                Symbol s = new Symbol();
+                s.setType( Symbol.SymbolType.LEXEME );
+                localTable.add( nextToken.tokenVal, s );
+            }
+            else
+            {
+                System.out.println( "Variable " + nextToken.tokenVal + " already defined" );
+                //throw new Exception( "Variable " + nextToken.tokenVal + " already defined" );
+            }
+        }
+
         node aNode = new node( Scanner.TokenType.ID, nextToken.tokenVal );
 
         return aNode;
@@ -177,7 +219,7 @@ public class EvalParser
 
         if( nextToken != null && nextToken.tokenType == Scanner.TokenType.INT )
         {
-            result = var_decl();
+            result = var_decl( false );
 
             nextToken = lookahead();
 
@@ -201,6 +243,14 @@ public class EvalParser
         else if( nextToken != null && nextToken.tokenType == Scanner.TokenType.ID )
         {
             match( nextToken, Scanner.TokenType.ID );
+
+            if( localTable.find( nextToken ) == null )
+            {
+                if( globalTable.find( nextToken ) == null )
+                {
+                    System.out.println( "Undefined variable: " + nextToken.tokenVal );
+                }
+            }
 
             result = new node( Scanner.TokenType.ID, nextToken.tokenVal );
 
@@ -541,6 +591,15 @@ public class EvalParser
             else if ( nextToken != null && nextToken.tokenType == Scanner.TokenType.ID )
             {
                 match( nextToken, Scanner.TokenType.ID );
+
+                if( localTable.find( nextToken ) == null )
+                {
+                    if ( globalTable.find( nextToken ) == null )
+                    {
+                        System.out.println( "Undefined variable: " + nextToken.tokenVal );
+                    }
+                }
+
                 aNode = new node( Scanner.TokenType.ID, nextToken.tokenVal );
                 return aNode;
             }

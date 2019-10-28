@@ -16,8 +16,10 @@ public class SymbolTable
         table.put( key, sym );
     }
 
-    public Symbol find( String key )
+    public Symbol find( Scanner.Token aToken )
     {
+        String key = aToken.tokenVal;
+
         for ( SymbolTable e = this; e != null; e = e.prev )
         {
             Symbol found = e.table.get( key );
@@ -26,7 +28,6 @@ public class SymbolTable
                 return found;
             }
         }
-        System.out.println( "ERROR: There is no symbol table reference for: " + key );
         return null;
     }
 }
