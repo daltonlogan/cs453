@@ -358,8 +358,7 @@ public class EvalParser
     private node boolCompare()
     {
         node result = A();
-        //System.out.println("" + result.tLoc + ", " + result.fLoc);
-        
+
         while ( lookahead().tokenType == Scanner.TokenType.AND || lookahead().tokenType == Scanner.TokenType.OR )
         {
             Scanner.Token nextToken = lookahead();
@@ -371,20 +370,16 @@ public class EvalParser
                 mid.left = result;
                 mid.right = A();
 
-                mid.tLoc = mid.left.tLoc;
-                mid.fLoc = mid.left.fLoc;
-                
                 // Set children labels
-                //mid.left.tLoc = mid.right.tLoc;
+                mid.left.tLoc = mid.right.tLoc;
                 mid.left.fLoc = mid.fLoc;
-                //mid.right.tLoc = mid.tLoc;
+                mid.right.tLoc = mid.tLoc;
                 mid.right.fLoc = mid.fLoc;
 
                 // Set AND labels
                 result = mid;
-                //result.fLoc = flabelID; //DALTON
-                //result.tLoc = tlabelID;
-
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
             }
             else if ( nextToken.tokenType == Scanner.TokenType.OR )
             {
@@ -393,19 +388,16 @@ public class EvalParser
                 mid.left = result;
                 mid.right = A();
 
-                mid.tLoc = mid.left.tLoc;
-                mid.fLoc = mid.right.fLoc;
-                
                 // Set children labels
                 mid.left.tLoc = mid.tLoc;
-                //mid.left.fLoc = mid.right.fLoc;
+                mid.left.fLoc = mid.right.fLoc;
                 mid.right.tLoc = mid.tLoc;
                 mid.right.fLoc = mid.fLoc;
 
                 // Set OR labels
                 result = mid;
-                //result.fLoc = flabelID;
-                //result.tLoc = tlabelID;
+                result.fLoc = flabelID;
+                result.tLoc = tlabelID;
             }
         }
         return result;
