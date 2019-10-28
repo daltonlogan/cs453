@@ -889,6 +889,20 @@ public class SimpleJavaTest{
                 "x = temp0\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
+        eval = "public class testMultipleError { int x; int y; void main() { int x = 0; a = 1; b = 2; } void main() { a = 2; y = 3; } }";
+        System.out.println( "Testing: " + eval );
+        result = "temp0 = 0\n" +
+                "x = temp0\n" +
+                "temp0 = 1\n" +
+                "a = temp0\n" +
+                "temp0 = 2\n" +
+                "b = temp0\n" +
+                "temp0 = 2\n" +
+                "a = temp0\n" +
+                "temp0 = 3\n" +
+                "y = temp0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
+
 
         System.out.println("*******************************************");
         System.out.println("End of test suite!!!");
