@@ -114,6 +114,8 @@ public class EvalParser
         nextToken = lookahead();
         match( nextToken, Scanner.TokenType.ID );
 
+        localTable = new Table( null );
+
         if( globalTable.find( nextToken ) == null )
         {
             Symbol aFunc = new Symbol();
@@ -122,7 +124,7 @@ public class EvalParser
         }
         else
         {
-            System.out.println( "Function " + nextToken.tokenVal + " already defined" );
+            System.out.println( "ERROR: Function \'" + nextToken.tokenVal + "\' already defined" );
             //throw new Exception( "Variable " + nextToken.tokenVal + " already defined" );
         }
 
@@ -151,12 +153,12 @@ public class EvalParser
             if( globalTable.find( nextToken ) == null )
             {
                 Symbol s = new Symbol();
-                s.setType( Symbol.SymbolType.LEXEME );
+                s.setType( Symbol.SymbolType.INT );
                 globalTable.add( nextToken.tokenVal, s );
             }
             else
             {
-                System.out.println( "Variable " + nextToken.tokenVal + " already defined" );
+                System.out.println( "ERROR: Variable \'" + nextToken.tokenVal + "\' already defined" );
                 //throw new Exception( "Variable " + nextToken.tokenVal + " already defined" );
             }
         }
@@ -165,12 +167,12 @@ public class EvalParser
             if( localTable.find( nextToken ) == null )
             {
                 Symbol s = new Symbol();
-                s.setType( Symbol.SymbolType.LEXEME );
+                s.setType( Symbol.SymbolType.INT );
                 localTable.add( nextToken.tokenVal, s );
             }
             else
             {
-                System.out.println( "Variable " + nextToken.tokenVal + " already defined" );
+                System.out.println( "ERROR: Variable \'" + nextToken.tokenVal + "\' already defined" );
                 //throw new Exception( "Variable " + nextToken.tokenVal + " already defined" );
             }
         }
@@ -248,7 +250,7 @@ public class EvalParser
             {
                 if( globalTable.find( nextToken ) == null )
                 {
-                    System.out.println( "Undefined variable: " + nextToken.tokenVal );
+                    System.out.println( "ERROR: Undefined variable: \'" + nextToken.tokenVal + "\'" );
                 }
             }
 
@@ -596,7 +598,7 @@ public class EvalParser
                 {
                     if ( globalTable.find( nextToken ) == null )
                     {
-                        System.out.println( "Undefined variable: " + nextToken.tokenVal );
+                        System.out.println( "ERROR: Undefined variable: \'" + nextToken.tokenVal + "\'" );
                     }
                 }
 
