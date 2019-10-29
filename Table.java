@@ -1,13 +1,13 @@
-import java.util.Hashtable;
+import java.util.TreeMap;
 
 public class Table
 {
-    private Hashtable< String, Symbol > table;
+    private TreeMap< String, Symbol > table;
     private Table prev;
 
     public Table( Table p )
     {
-        table = new Hashtable();
+        table = new TreeMap();
         prev = p;
     }
 
