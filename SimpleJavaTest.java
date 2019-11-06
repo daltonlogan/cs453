@@ -903,6 +903,26 @@ public class SimpleJavaTest{
                 "y = temp0\n";
         if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
 
+        eval = "public class test {void main() { if(15 < 98 && 2 < 3 && 3 < 4){ } } }";
+        System.out.println( "Testing: " + eval );
+        result = "temp0 = 15\n" +
+                "temp1 = 98\n" +
+                "IF_LT: temp0, temp1, trueLabel2\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel2\n" +
+                "temp2 = 2\n" +
+                "temp3 = 3\n" +
+                "IF_LT: temp2, temp3, trueLabel1\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel1\n" +
+                "temp4 = 3\n" +
+                "temp5 = 4\n" +
+                "IF_LT: temp4, temp5, trueLabel0\n" +
+                "GOTO: falseLabel0\n" +
+                "trueLabel0\n" +
+                "falseLabel0\n";
+        if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
+
 
         System.out.println("*******************************************");
         System.out.println("End of test suite!!!");
