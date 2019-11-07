@@ -4,12 +4,14 @@ public class codeGenTuple {
     private List<Tao> theThreeAddressList;
     private Table theTable;
     private String theName;
+    private int stackSize;
 
     public codeGenTuple ( List<Tao> aThreeAddrList, Table aTable, String aName )
     {
         theThreeAddressList = aThreeAddrList;
         theTable = aTable;
         theName = aName;
+        stackSize = 0;
     }
 
     public List<Tao> getTheThreeAddressList() {
@@ -34,5 +36,10 @@ public class codeGenTuple {
 
     public void setTheName(String aName) {
         theName = aName;
+    }
+
+    public void setStackSize( int stackSize )
+    {
+        this.stackSize = stackSize;
     }
 }

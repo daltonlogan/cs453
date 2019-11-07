@@ -30,4 +30,9 @@ public class Table
         }
         return null;
     }
+
+    public TreeMap< String, Symbol > getTable( )
+    {
+        return table;
+    }
 }

@@ -525,8 +525,21 @@ public class EvalParser
                 node right = T();
                 mid.left = result;
                 mid.right = right;
+
+                Symbol s = new Symbol();
+                s.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + mid.left.loc, s );
+
+                Symbol s2 = new Symbol();
+                s2.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + mid.right.loc, s2 );
+
                 result = mid;
                 result.loc = tempID++;
+
+                Symbol s3 = new Symbol();
+                s3.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + result.loc, s3 );
             }
             else if ( nextToken.tokenType == Scanner.TokenType.MINUS )
             {
@@ -535,8 +548,22 @@ public class EvalParser
                 node right = T();
                 mid.left = result;
                 mid.right = right;
+
+                Symbol s = new Symbol();
+                s.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + mid.left.loc, s );
+
+                Symbol s2 = new Symbol();
+                s2.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + mid.right.loc, s2 );
+
+
                 result = mid;
                 result.loc = tempID++;
+
+                Symbol s3 = new Symbol();
+                s3.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + result.loc, s3 );
             }
         }
         return result;
@@ -556,8 +583,21 @@ public class EvalParser
                 node right = F();
                 mid.left = result;
                 mid.right = right;
+
+                Symbol s = new Symbol();
+                s.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + mid.left.loc, s );
+
+                Symbol s2 = new Symbol();
+                s2.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + mid.right.loc, s2 );
+
                 result = mid;
                 result.loc = tempID++;
+
+                Symbol s3 = new Symbol();
+                s3.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + result.loc, s3 );
             }
             else if ( nextToken.tokenType == Scanner.TokenType.DIV )
             {
@@ -566,8 +606,21 @@ public class EvalParser
                 node right = F();
                 mid.left = result;
                 mid.right = right;
+
+                Symbol s = new Symbol();
+                s.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + mid.left.loc, s );
+
+                Symbol s2 = new Symbol();
+                s2.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + mid.right.loc, s2 );
+
                 result = mid;
                 result.loc = tempID++;
+
+                Symbol s3 = new Symbol();
+                s3.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + result.loc, s3 );
             }
         }
         return result;
@@ -603,6 +656,11 @@ public class EvalParser
                 match( nextToken, Scanner.TokenType.NUM );
                 expressionInside = true;
                 aNode = new node( Scanner.TokenType.NUM, nextToken.tokenVal );
+
+                Symbol s = new Symbol();
+                s.setType( Symbol.SymbolType.INT );
+                localTable.add( "temp" + aNode.loc, s );
+
                 aNode.loc = tempID++;
                 return aNode;
             }
@@ -662,6 +720,17 @@ public class EvalParser
         {
             theFinishedThreeAddress.append( aTao.toString() );
         }
+
+        for( codeGenTuple aTuple : funcTuples )
+        {
+            int aOffset = 1;
+            for( Symbol aSymbol : aTuple.getTheTable().getTable().values() )
+            {
+                aSymbol.setOffset( aOffset++ );
+            }
+            aTuple.setStackSize( aTuple.getTheTable().getTable().values().size() * 4 );
+        }
+
         return theFinishedThreeAddress.toString();
     }
 
