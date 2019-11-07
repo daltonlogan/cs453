@@ -1,12 +1,11 @@
 import java.util.List;
-import java.util.TreeMap;
 
 public class codeGenTuple {
     private List<Tao> theThreeAddressList;
-    private TreeMap< String, Symbol > theTable;
+    private Table theTable;
     private String theName;
 
-    public codeGenTuple ( List<Tao> aThreeAddrList, TreeMap< String, Symbol > aTable, String aName )
+    public codeGenTuple ( List<Tao> aThreeAddrList, Table aTable, String aName )
     {
         theThreeAddressList = aThreeAddrList;
         theTable = aTable;
@@ -17,7 +16,7 @@ public class codeGenTuple {
         return theThreeAddressList;
     }
 
-    public TreeMap<String, Symbol> getTheTable() {
+    public Table getTheTable() {
         return theTable;
     }
 
@@ -29,7 +28,7 @@ public class codeGenTuple {
         theThreeAddressList = aThreeAddressList;
     }
 
-    public void setTheTable(TreeMap<String, Symbol> aTable) {
+    public void setTheTable(Table aTable) {
         theTable = aTable;
     }
 

@@ -30,6 +30,13 @@ public class Tao { // Three Address Object
 		op = oper;
 	}
 
+	Tao(Tao aTao){
+		op = aTao.op;
+		src1 = aTao.src1;
+		src2 = aTao.src2;
+		destination = aTao.destination;
+	}
+
 	/*
 	 * This method covers all operations that need only one source or destination
 	 * 

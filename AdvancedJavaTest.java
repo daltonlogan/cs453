@@ -1,5 +1,6 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class AdvancedJavaTest{
 
@@ -40,9 +41,19 @@ public class AdvancedJavaTest{
     System.out.println("*******************************************");
   }
 
+  public static void TestObjectCreation()
+  {
+    SimpleJava parser = new SimpleJava();
+
+    String eval = "public class test { void main() { int i = 4; } void main2() { int j = 5; } }";
+    String result = "";
+    if ( ( !parser.getThreeAddr( eval ).equals( result ) ) ) System.out.println("ERROR!!!!!!!!!!!!!!!!!!!!!\n" + parser.getThreeAddr( eval ));
+
+  }
+
   public static void main(String[] args){
     try {
-      TestThreeAddrGen();
+      TestObjectCreation();
     } catch (Exception e){
       e.printStackTrace();
     }
