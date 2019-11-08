@@ -806,6 +806,9 @@ public class EvalParser
             {
                 switch ( aTao.op )
                 {
+                    case ASSIGN:
+                        theLocals.append( aTao.destination + " = r1;\n" );
+                        break;
                     case NUM:
                         theLocals.append( "r1 = " + aTao.src1 + ";\n" );
                         theLocals.append( "*(fp-" + aMap.get( aTao.destination.toString() ).getOffset() + ") = r1;\n" );

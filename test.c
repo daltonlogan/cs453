@@ -16,6 +16,7 @@ fp = sp;
 sp = sp - 2;
 r1 = 0;
 *(fp-1) = r1;
+reserved = r1;
 r1 = 2;
 *(fp-1) = r1;
 r1 = 3;
@@ -25,8 +26,9 @@ r2 = *(fp-2);
 if(r1 < r2) goto truelabel0;
 goto falselabel0;
 truelabel0:
-r1 = 42;
+r1 = 45;
 *(fp-1) = r1;
+reserved = r1;
 falselabel0:
 sp = sp + 2;
 fp = *(sp+2);
