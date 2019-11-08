@@ -7,28 +7,27 @@ int64_t *sp = &stack[99];
 int64_t *fp = &stack[99];
 int64_t *ra = &&exit;
 goto mainEntry;
-int64_t ;
-main:
+int64_t reserved = 0, x = 0, y = 0;
+mainEntry:
 sp = sp - 2;
 *(sp+2) = fp;
 *(sp+1) = ra;
 fp = sp;
 sp = sp - 2;
-r1 = 4;
-*(fp-temp0.offset) = r1;
-sp = sp + 2;
-fp = *(sp+2);
-ra = *(sp+1);
-sp = sp + 2;
-goto *ra;
-main2:
-sp = sp - 2;
-*(sp+2) = fp;
-*(sp+1) = ra;
-fp = sp;
-sp = sp - 2;
-r1 = 5;
-*(fp-temp0.offset) = r1;
+r1 = 0;
+*(fp-1) = r1;
+r1 = 2;
+*(fp-1) = r1;
+r1 = 3;
+*(fp-2) = r1;
+r1 = *(fp-1);
+r2 = *(fp-2);
+if(r1 < r2) goto truelabel0;
+goto falselabel0;
+truelabel0:
+r1 = 42;
+*(fp-1) = r1;
+falselabel0:
 sp = sp + 2;
 fp = *(sp+2);
 ra = *(sp+1);
