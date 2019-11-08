@@ -29,7 +29,7 @@ public class AdvancedJavaTest{
     /* Run Shell command */
     Process cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
-    consume(cmdProc); 
+    consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
     cmdProc.waitFor();
     consume(cmdProc);
@@ -53,7 +53,7 @@ public class AdvancedJavaTest{
 
   public static void main(String[] args){
     try {
-      TestObjectCreation();
+      TestThreeAddrGen();
     } catch (Exception e){
       e.printStackTrace();
     }

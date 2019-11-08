@@ -124,7 +124,7 @@ public class EvalParser
         {
             Symbol aFunc = new Symbol();
             aFunc.setType( Symbol.SymbolType.FUNC );
-            globalTable.add( nextToken.tokenVal, aFunc );
+            //globalTable.add( nextToken.tokenVal, aFunc );
         }
         else
         {
@@ -732,6 +732,113 @@ public class EvalParser
         }
 
         return theFinishedThreeAddress.toString();
+    }
+
+    public String getGlobalVariables()
+    {
+        StringBuilder theGlobals = new StringBuilder("int64_t ");
+        int count = 0;
+        for ( String aKey : globalTable.getTable().keySet() )
+        {
+            theGlobals.append( aKey );
+            theGlobals.append( " = 0" );
+            if( count != globalTable.getTable().size() - 1 )
+            {
+                theGlobals.append( ", " );
+            }
+            count++;
+        }
+        theGlobals.append( ";\n" );
+        return theGlobals.toString();
+    }
+
+    public String getLocalVariables()
+    {
+        StringBuilder theLocals = new StringBuilder();
+        for( codeGenTuple aTuple : funcTuples )
+        {
+            theLocals.append( aTuple.getTheName() ).append( ":\n" );
+            theLocals.append( "sp = sp - 2;\n" +
+                    "*(sp+2) = fp;\n" +
+                    "*(sp+1) = ra;\n" +
+                    "fp = sp;\n" +
+                    "sp = sp - " + aTuple.getTheTable().getTable().size() + ";\n" );
+
+            for( Tao aTao : aTuple.getTheThreeAddressList() )
+            {
+                switch ( aTao.op )
+                {
+                    case NUM:
+                        theLocals.append( "r1 = " + aTao.src1 + ";\n" );
+                        theLocals.append( "*(fp-" + aTao.destination + ".offset) = r1;\n" );
+                        break;
+                    case PLUS:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "r3 = r1 + r2;\n" );
+                        theLocals.append( "*(fp-" + aTao.destination + ".offset) = r3;\n" );
+                        break;
+                    case MINUS:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "r3 = r1 - r2;\n" );
+                        theLocals.append( "*(fp-" + aTao.destination + ".offset) = r3;\n" );
+                        break;
+                    case MUL:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "r3 = r1 * r2;\n" );
+                        theLocals.append( "*(fp-" + aTao.destination + ".offset) = r3;\n" );
+                        break;
+                    case DIV:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "r3 = r1 / r2;\n" );
+                        theLocals.append( "*(fp-" + aTao.destination + ".offset) = r3;\n" );
+                        break;
+                    case LT:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "if(r1 < r2) goto truelabel" + aTao.destination + ";\n" );
+                        break;
+                    case GT:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "if(r1 > r2) goto truelabel" + aTao.destination + ";\n" );
+                        break;
+                    case LTE:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "if(r1 <= r2) goto truelabel" + aTao.destination + ";\n" );
+                        break;
+                    case GTE:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "if(r1 >= r2) goto truelabel" + aTao.destination + ";\n" );
+                        break;
+                    case EQUALS:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "if(r1 == r2) goto truelabel" + aTao.destination + ";\n" );
+                        break;
+                    case NOTEQUALS:
+                        theLocals.append( "r1 = *(fp-" + aTao.src1 + ".offset);\n" );
+                        theLocals.append( "r2 = *(fp-" + aTao.src2 + ".offset);\n" );
+                        theLocals.append( "if(r1 != r2) goto truelabel" + aTao.destination + ";\n" );
+                        break;
+                    case GOTO:
+                        theLocals.append( "goto falselabel" + aTao.destination + ";\n" );
+                        break;
+                }
+            }
+
+            theLocals.append( "sp = sp + " + aTuple.getTheTable().getTable().size() + ";\n" +
+                    "fp = *(sp+2);\n" +
+                    "ra = *(sp+1);\n" +
+                    "sp = sp + 2;\n" +
+                    "goto *ra;\n" );
+        }
+        return theLocals.toString();
     }
 
     private void generateTAC( node aNode, boolean isOR )
