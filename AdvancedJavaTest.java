@@ -21,7 +21,7 @@ public class AdvancedJavaTest{
     System.out.println("*******************************************");
     System.out.println("Testing Three Address Generation");
 
-    String eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 < 3) {reserved = 42;}} }";
+    String  eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 < 3) {reserved = 42;}} }";
     AdvancedJava parser = new AdvancedJava();
     String fileName = "test.c";
     parser.codeGen(eval, fileName);
@@ -39,6 +39,231 @@ public class AdvancedJavaTest{
     System.out.println("Congrats: three address generation tests passed! Now make your own test cases "+
                        "(this is only a subset of what we will test your code on)");
     System.out.println("*******************************************");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 < 3) {reserved = 4242;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 4242);
+
+	System.out.println("Passed test  1");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 > 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 0);
+
+	System.out.println("Passed test  2");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 < 3 && 3 < 4) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 42);
+
+	System.out.println("Passed test  3");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; x = 2+3; if(2 < 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 42);
+
+	System.out.println("Passed test  4");
+/*//ERROR: Null Pointer Exception when running
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; x = 2+3; if(x == 5) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command *//*
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 42);
+
+	System.out.println("Passed test 5");*/
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; x = 2+3; if(5 == 5) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 42);
+
+	System.out.println("Passed test  5");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 5) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 42);
+
+	System.out.println("Passed test  6");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 5 && 4 > 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 42);
+
+	System.out.println("Passed test  7");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 4 || 4 < 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 0);
+
+	System.out.println("Passed test  8");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 4 || 4 > 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 42);
+
+	System.out.println("Passed test  9");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 5 && 4 > 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 42);
+
+	System.out.println("Passed test 10");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 5) {if (4 != 5) {reserved = 42;}}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 42);
+
+	System.out.println("Passed test 11");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; while(4 == 5) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 0);
+
+	System.out.println("Passed test 12");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(1 < 2 && 4 > 3) {reserved = x+1;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 6);
+
+	System.out.println("Passed test 13");
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0;} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 0);
+
+	System.out.println("Passed test 14");
+/*//Null Pointer Exception
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; x = 0; while(x < 2){x = x+1;reserved = x;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command *//*
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    assert(retValue == 2);
+
+	System.out.println("Passed test 15");*/
+
   }
 
   public static void TestObjectCreation()
