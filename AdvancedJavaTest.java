@@ -143,7 +143,7 @@ public class AdvancedJavaTest{
       System.out.println("Passed test  5");
     }
 
-    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 5) {reserved = 42;}} }";
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 4) {reserved = 42;}} }";
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
@@ -154,16 +154,16 @@ public class AdvancedJavaTest{
     cmdProc.waitFor();
     consume(cmdProc);
     retValue = cmdProc.exitValue();
-    if( retValue != 42 )
+    if( retValue != 0 )
     {
-      System.out.println( "FAIL\nExpected: 42\nActual: " + retValue );
+      System.out.println( "FAIL\nExpected: 0\nActual: " + retValue );
     }
     else
     {
       System.out.println("Passed test  6");
     }
 
-    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 5 && 4 > 3) {reserved = 42;}} }";
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; int x = 2+3; if(5 == 5 && 4 < 3) {reserved = 42;}} }";
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
@@ -174,9 +174,9 @@ public class AdvancedJavaTest{
     cmdProc.waitFor();
     consume(cmdProc);
     retValue = cmdProc.exitValue();
-    if( retValue != 42 )
+    if( retValue != 0 )
     {
-      System.out.println( "FAIL\nExpected: 42\nActual: " + retValue );
+      System.out.println( "FAIL\nExpected: 0\nActual: " + retValue );
     }
     else
     {
@@ -341,6 +341,176 @@ public class AdvancedJavaTest{
     {
       System.out.println("Passed test  15");
     }
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 < 3) {reserved = 42; if(5 > 5) {reserved = 4;}}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    if( retValue != 42 )
+    {
+      System.out.println( "FAIL\nExpected: 42\nActual: " + retValue );
+    }
+    else
+    {
+      System.out.println("Passed test  15");
+    }
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 < 3) {reserved = 42; if(5 < 5) {reserved = 4;}}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    if( retValue != 42 )
+    {
+      System.out.println( "FAIL\nExpected: 42\nActual: " + retValue );
+    }
+    else
+    {
+      System.out.println("Passed test  16");
+    }
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 < 3) {reserved = 42; if(5 != 5) {reserved = 4;}}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    if( retValue != 42 )
+    {
+      System.out.println( "FAIL\nExpected: 42\nActual: " + retValue );
+    }
+    else
+    {
+      System.out.println("Passed test  17");
+    }
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 < 3) {x = 4; if(5 == 5) {reserved = 40; x = 42;} reserved = x;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    if( retValue != 4 )
+    {
+      System.out.println( "FAIL\nExpected: 4\nActual: " + retValue );
+    }
+    else
+    {
+      System.out.println("Passed test  18");
+    }
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 < 3) {x = 4; if(5 == 5) {reserved = 40; int z = 42; reserved = z;}}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    if( retValue != 4 )
+    {
+      System.out.println( "FAIL\nExpected: 4\nActual: " + retValue );
+    }
+    else
+    {
+      System.out.println("Passed test  19");
+    }
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(3 >= 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    if( retValue != 42 )
+    {
+      System.out.println( "FAIL\nExpected: 42\nActual: " + retValue );
+    }
+    else
+    {
+      System.out.println("Passed test  20");
+    }
+
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 >= 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    if( retValue != 0 )
+    {
+      System.out.println( "FAIL\nExpected: 0\nActual: " + retValue );
+    }
+    else
+    {
+      System.out.println("Passed test  21");
+    }
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(2 <= 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    if( retValue != 42 )
+    {
+      System.out.println( "FAIL\nExpected: 42\nActual: " + retValue );
+    }
+    else
+    {
+      System.out.println("Passed test  22");
+    }
+
+//    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(4 <= 3) {reserved = 42;}} }";
+//    parser.codeGen(eval, fileName);
+//
+//    /* Run Shell command */
+//    cmdProc.waitFor();
+//    consume(cmdProc);
+//    cmdProc = Runtime.getRuntime().exec("./test");
+//    cmdProc.waitFor();
+//    consume(cmdProc);
+//    retValue = cmdProc.exitValue();
+//    if( retValue != 0 )
+//    {
+//      System.out.println( "FAIL\nExpected: 0\nActual: " + retValue );
+//    }
+//    else
+//    {
+//      System.out.println("Passed test  23");
+//    }
 
   }
 
