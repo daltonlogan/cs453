@@ -493,24 +493,24 @@ public class AdvancedJavaTest{
       System.out.println("Passed test  22");
     }
 
-//    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(4 <= 3) {reserved = 42;}} }";
-//    parser.codeGen(eval, fileName);
-//
-//    /* Run Shell command */
-//    cmdProc.waitFor();
-//    consume(cmdProc);
-//    cmdProc = Runtime.getRuntime().exec("./test");
-//    cmdProc.waitFor();
-//    consume(cmdProc);
-//    retValue = cmdProc.exitValue();
-//    if( retValue != 0 )
-//    {
-//      System.out.println( "FAIL\nExpected: 0\nActual: " + retValue );
-//    }
-//    else
-//    {
-//      System.out.println("Passed test  23");
-//    }
+    eval = "public class test { int x; int y; int reserved; void mainEntry() { reserved = 0; if(4 <= 3) {reserved = 42;}} }";
+    parser.codeGen(eval, fileName);
+
+    /* Run Shell command */
+    cmdProc.waitFor();
+    consume(cmdProc);
+    cmdProc = Runtime.getRuntime().exec("./test");
+    cmdProc.waitFor();
+    consume(cmdProc);
+    retValue = cmdProc.exitValue();
+    if( retValue != 0 )
+    {
+      System.out.println( "FAIL\nExpected: 0\nActual: " + retValue );
+    }
+    else
+    {
+      System.out.println("Passed test  23");
+    }
 
   }
 
