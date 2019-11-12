@@ -255,6 +255,11 @@ public class EvalParser
             mid.right = right;
             result = mid;
             result.loc = mid.left.loc;
+
+            Symbol s = new Symbol();
+            s.setType( Symbol.SymbolType.INT );
+            localTable.add( result.left.value, s );
+
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.SEMICOLON );
 
@@ -281,6 +286,11 @@ public class EvalParser
             mid.right = right;
             result = mid;
             result.loc = mid.left.loc;
+
+            Symbol s = new Symbol();
+            s.setType( Symbol.SymbolType.INT );
+            localTable.add( result.left.value, s );
+
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.SEMICOLON );
         }
@@ -807,7 +817,7 @@ public class EvalParser
                 switch ( aTao.op )
                 {
                     case ASSIGN:
-                        theLocals.append( aTao.destination + " = r1;\n" );
+                        theLocals.append( aTao.destination + " = " + "*(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
                         break;
                     case NUM:
                         theLocals.append( "r1 = " + aTao.src1 + ";\n" );
