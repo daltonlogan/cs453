@@ -813,6 +813,7 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
@@ -835,6 +836,7 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
@@ -857,6 +859,7 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
@@ -879,6 +882,7 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
@@ -901,13 +905,14 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
     cmdProc.waitFor();
     consume(cmdProc);
     retValue = cmdProc.exitValue();
-    if( retValue != 4 )
+    if( retValue != 42 )
     {
       System.out.println( "FAIL\nExpected: 4\nActual: " + retValue );
     }
@@ -923,13 +928,14 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
     cmdProc.waitFor();
     consume(cmdProc);
     retValue = cmdProc.exitValue();
-    if( retValue != 4 )
+    if( retValue != 42 )
     {
       System.out.println( "FAIL\nExpected: 4\nActual: " + retValue );
     }
@@ -945,6 +951,7 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
@@ -967,6 +974,7 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
@@ -989,6 +997,7 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");
@@ -1011,6 +1020,7 @@ public class AdvancedJavaTest{
     parser.codeGen(eval, fileName);
 
     /* Run Shell command */
+    cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
     cmdProc.waitFor();
     consume(cmdProc);
     cmdProc = Runtime.getRuntime().exec("./test");

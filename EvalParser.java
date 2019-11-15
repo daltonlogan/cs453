@@ -176,7 +176,6 @@ public class EvalParser
             else
             {
                 System.out.println( "ERROR: Variable \'" + nextToken.tokenVal + "\' already defined" );
-                //throw new Exception( "Variable " + nextToken.tokenVal + " already defined" );
             }
         }
         else
@@ -190,7 +189,6 @@ public class EvalParser
             else
             {
                 System.out.println( "ERROR: Variable \'" + nextToken.tokenVal + "\' already defined" );
-                //throw new Exception( "Variable " + nextToken.tokenVal + " already defined" );
             }
         }
 
@@ -256,9 +254,12 @@ public class EvalParser
             result = mid;
             result.loc = mid.left.loc;
 
-            Symbol s = new Symbol();
-            s.setType( Symbol.SymbolType.INT );
-            localTable.add( result.left.value, s );
+            if( localTable.find( nextToken ) == null )
+            {
+                Symbol s = new Symbol();
+                s.setType( Symbol.SymbolType.INT );
+                localTable.add( result.left.value, s );
+            }
 
             nextToken = lookahead();
             match( nextToken, Scanner.TokenType.SEMICOLON );
@@ -814,79 +815,115 @@ public class EvalParser
 
             for( Tao aTao : aTuple.getTheThreeAddressList() )
             {
+                String src1 = "";
+                String src2 = "";
+                String dest = "";
+
+                if( aTao.src1 != null )
+                {
+                    if( globalTable.getTable().containsKey( aTao.src1.toString() ) || aMap.containsKey( aTao.src1.toString() ) )
+                    {
+                        src1 = globalTable.getTable().containsKey(aTao.src1.toString()) ? aTao.src1.toString() : "*(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ")";
+                    }
+                }
+
+                if(  aTao.src2 != null )
+                {
+                    if( globalTable.getTable().containsKey( aTao.src2.toString() ) || aMap.containsKey( aTao.src2.toString() ) )
+                    {
+                        src2 = globalTable.getTable().containsKey( aTao.src2.toString() ) ? aTao.src2.toString() : "*(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ")";
+                    }
+                }
+
+                if( aTao.destination != null )
+                {
+                    if( globalTable.getTable().containsKey( aTao.destination.toString() ) || aMap.containsKey( aTao.destination.toString() ) )
+                    {
+                        dest = globalTable.getTable().containsKey( aTao.destination.toString() ) ? aTao.destination.toString() : "*(fp-" + aMap.get( aTao.destination.toString() ).getOffset() + ")";
+                    }
+                }
+
                 switch ( aTao.op )
                 {
                     case ASSIGN:
-                        theLocals.append( aTao.destination + " = " + "*(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
+                        theLocals.append( dest + " = " + src1 + ";\n" );
                         break;
                     case NUM:
                         theLocals.append( "r1 = " + aTao.src1 + ";\n" );
-                        theLocals.append( "*(fp-" + aMap.get( aTao.destination.toString() ).getOffset() + ") = r1;\n" );
+                        theLocals.append( dest + " = r1;\n" );
                         break;
                     case PLUS:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
                         theLocals.append( "r3 = r1 + r2;\n" );
-                        theLocals.append( "*(fp-" + aMap.get( aTao.destination.toString() ).getOffset() + ") = r3;\n" );
+                        theLocals.append( dest + " = r3;\n" );
                         break;
                     case MINUS:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
                         theLocals.append( "r3 = r1 - r2;\n" );
-                        theLocals.append( "*(fp-" + aMap.get( aTao.destination.toString() ).getOffset() + ") = r3;\n" );
+                        theLocals.append( dest + " = r3;\n" );
                         break;
                     case MUL:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
                         theLocals.append( "r3 = r1 * r2;\n" );
-                        theLocals.append( "*(fp-" + aMap.get( aTao.destination.toString() ).getOffset() + ") = r3;\n" );
+                        theLocals.append( dest + " = r3;\n" );
                         break;
                     case DIV:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
                         theLocals.append( "r3 = r1 / r2;\n" );
-                        theLocals.append( "*(fp-" + aMap.get( aTao.destination.toString() ).getOffset() + ") = r3;\n" );
+                        theLocals.append( dest + " = r3;\n" );
                         break;
                     case LT:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "if(r1 < r2) goto truelabel" + aTao.destination + ";\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
+                        theLocals.append( "if(r1 < r2) goto " + aTao.destination + ";\n" );
                         break;
                     case GT:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "if(r1 > r2) goto truelabel" + aTao.destination + ";\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
+                        theLocals.append( "if(r1 > r2) goto " + aTao.destination + ";\n" );
                         break;
                     case LTE:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "if(r1 <= r2) goto truelabel" + aTao.destination + ";\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
+                        theLocals.append( "if(r1 <= r2) goto " + aTao.destination + ";\n" );
                         break;
                     case GTE:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "if(r1 >= r2) goto truelabel" + aTao.destination + ";\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
+                        theLocals.append( "if(r1 >= r2) goto " + aTao.destination + ";\n" );
                         break;
                     case EQUALS:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "if(r1 == r2) goto truelabel" + aTao.destination + ";\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
+                        theLocals.append( "if(r1 == r2) goto " + aTao.destination + ";\n" );
                         break;
                     case NOTEQUALS:
-                        theLocals.append( "r1 = *(fp-" + aMap.get( aTao.src1.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "r2 = *(fp-" + aMap.get( aTao.src2.toString() ).getOffset() + ");\n" );
-                        theLocals.append( "if(r1 != r2) goto truelabel" + aTao.destination + ";\n" );
+                        theLocals.append( "r1 = " + src1 + ";\n" );
+                        theLocals.append( "r2 = " + src2 + ";\n" );
+                        theLocals.append( "if(r1 != r2) goto " + aTao.destination + ";\n" );
                         break;
                     case GOTO:
-                        theLocals.append( "goto falselabel" + aTao.destination + ";\n" );
+                        theLocals.append( "goto " + aTao.destination + ";\n" );
                         break;
                     case LABEL:
                         theLocals.append( aTao.src1 + ":\n" );
                         break;
+                    case IF:
+                        theLocals.append( aTao.destination + ":\n" );
+                        break;
+                    case WHILE:
+                        theLocals.append( "goto " + aTao.src1 + ";\n" );
+                        theLocals.append( aTao.destination + ":\n" );
+                        break;
+                    case START_WHILE:
+                        theLocals.append( aTao.src1 + ":\n" );
+                        break;
                 }
             }
-
-            theLocals.append( "falselabel0:\n" );
 
             theLocals.append( "sp = sp + " + aTuple.getTheTable().getTable().size() + ";\n" +
                     "fp = *(sp+2);\n" +
@@ -987,14 +1024,14 @@ public class EvalParser
                             //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand lt_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand lt_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand lt_dest = new Operand( aNode.tLoc );
+                    Operand lt_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao ltObject = new Tao( Tao.Operation.LT, lt_src1, lt_src2, lt_dest );
                     threeAddressObjects.add( ltObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
 
-                    Operand lt_goto = new Operand( aNode.fLoc );
+                    Operand lt_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao ltGotoObject = new Tao( Tao.Operation.GOTO, lt_goto );
                     threeAddressObjects.add( ltGotoObject );
 
@@ -1018,13 +1055,13 @@ public class EvalParser
                             //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand gt_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand gt_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand gt_dest = new Operand( aNode.tLoc );
+                    Operand gt_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao gtObject = new Tao( Tao.Operation.GT, gt_src1, gt_src2, gt_dest );
                     threeAddressObjects.add( gtObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand gt_goto = new Operand( aNode.fLoc );
+                    Operand gt_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao gtGotoObject = new Tao( Tao.Operation.GOTO, gt_goto );
                     threeAddressObjects.add( gtGotoObject );
 
@@ -1048,13 +1085,13 @@ public class EvalParser
                             //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand lte_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand lte_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand lte_dest = new Operand( aNode.tLoc );
+                    Operand lte_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao lteObject = new Tao( Tao.Operation.LTE, lte_src1, lte_src2, lte_dest );
                     threeAddressObjects.add( lteObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand lte_goto = new Operand( aNode.fLoc );
+                    Operand lte_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao lteGotoObject = new Tao( Tao.Operation.GOTO, lte_goto );
                     threeAddressObjects.add( lteGotoObject );
 
@@ -1079,13 +1116,13 @@ public class EvalParser
                             //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand gte_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand gte_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand gte_dest = new Operand( aNode.tLoc );
+                    Operand gte_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao gteObject = new Tao( Tao.Operation.GTE, gte_src1, gte_src2, gte_dest );
                     threeAddressObjects.add( gteObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand gte_goto = new Operand( aNode.fLoc );
+                    Operand gte_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao gteGotoObject = new Tao( Tao.Operation.GOTO, gte_goto );
                     threeAddressObjects.add( gteGotoObject );
 
@@ -1110,13 +1147,13 @@ public class EvalParser
                             //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand equals_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand equals_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand equals_dest = new Operand( aNode.tLoc );
+                    Operand equals_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao equalsObject = new Tao( Tao.Operation.EQUALS, equals_src1, equals_src2, equals_dest );
                     threeAddressObjects.add( equalsObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand equals_goto = new Operand( aNode.fLoc );
+                    Operand equals_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao equalsGotoObject = new Tao( Tao.Operation.GOTO, equals_goto );
                     threeAddressObjects.add( equalsGotoObject );
 
@@ -1141,13 +1178,13 @@ public class EvalParser
                             //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand not_equals_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand not_equals_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand not_equals_dest = new Operand( aNode.tLoc );
+                    Operand not_equals_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao notEqualsObject = new Tao( Tao.Operation.NOTEQUALS, not_equals_src1, not_equals_src2, not_equals_dest );
                     threeAddressObjects.add( notEqualsObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand not_equals_goto = new Operand( aNode.fLoc );
+                    Operand not_equals_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao notEqualsGotoObject = new Tao( Tao.Operation.GOTO, not_equals_goto );
                     threeAddressObjects.add( notEqualsGotoObject );
 
@@ -1168,15 +1205,15 @@ public class EvalParser
                     break;
                 case IF:
                     //threeAddress += "falseLabel" + aNode.fLoc + "\n";
-                    Operand if_dest = new Operand( aNode.fLoc );
+                    Operand if_dest = new Operand( "falselabel" + aNode.fLoc );
                     Tao ifObject = new Tao( Tao.Operation.IF, if_dest );
                     threeAddressObjects.add( ifObject );
                     break;
                 case WHILE:
                     //threeAddress += "GOTO: repeatLabel" + aNode.rLoc + "\n" +
                             //"falseLabel" + aNode.fLoc + "\n";
-                    Operand while_src1 = new Operand( aNode.rLoc );
-                    Operand while_dest = new Operand( aNode.fLoc );
+                    Operand while_src1 = new Operand( "repeatlabel" + aNode.rLoc );
+                    Operand while_dest = new Operand( "falselabel" + aNode.fLoc );
                     Tao whileObject = new Tao( Tao.Operation.WHILE, while_src1, while_dest );
                     threeAddressObjects.add( whileObject );
                     break;
@@ -1201,7 +1238,7 @@ public class EvalParser
             if ( aNode.type == Scanner.TokenType.WHILE )
             {
                 //threeAddress += "repeatLabel" + aNode.rLoc + "\n";
-                Operand start = new Operand( aNode.rLoc );
+                Operand start = new Operand( "repeatlabel" + aNode.rLoc );
                 Tao startObject = new Tao( Tao.Operation.START_WHILE, start );
                 tacObjects.add( startObject );
             }
@@ -1279,14 +1316,14 @@ public class EvalParser
                     //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand lt_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand lt_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand lt_dest = new Operand( aNode.tLoc );
+                    Operand lt_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao ltObject = new Tao( Tao.Operation.LT, lt_src1, lt_src2, lt_dest );
                     tacObjects.add( ltObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
 
-                    Operand lt_goto = new Operand( aNode.fLoc );
+                    Operand lt_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao ltGotoObject = new Tao( Tao.Operation.GOTO, lt_goto );
                     tacObjects.add( ltGotoObject );
 
@@ -1310,13 +1347,13 @@ public class EvalParser
                     //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand gt_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand gt_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand gt_dest = new Operand( aNode.tLoc );
+                    Operand gt_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao gtObject = new Tao( Tao.Operation.GT, gt_src1, gt_src2, gt_dest );
                     tacObjects.add( gtObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand gt_goto = new Operand( aNode.fLoc );
+                    Operand gt_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao gtGotoObject = new Tao( Tao.Operation.GOTO, gt_goto );
                     tacObjects.add( gtGotoObject );
 
@@ -1340,13 +1377,13 @@ public class EvalParser
                     //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand lte_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand lte_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand lte_dest = new Operand( aNode.tLoc );
+                    Operand lte_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao lteObject = new Tao( Tao.Operation.LTE, lte_src1, lte_src2, lte_dest );
                     tacObjects.add( lteObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand lte_goto = new Operand( aNode.fLoc );
+                    Operand lte_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao lteGotoObject = new Tao( Tao.Operation.GOTO, lte_goto );
                     tacObjects.add( lteGotoObject );
 
@@ -1371,13 +1408,13 @@ public class EvalParser
                     //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand gte_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand gte_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand gte_dest = new Operand( aNode.tLoc );
+                    Operand gte_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao gteObject = new Tao( Tao.Operation.GTE, gte_src1, gte_src2, gte_dest );
                     tacObjects.add( gteObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand gte_goto = new Operand( aNode.fLoc );
+                    Operand gte_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao gteGotoObject = new Tao( Tao.Operation.GOTO, gte_goto );
                     tacObjects.add( gteGotoObject );
 
@@ -1402,13 +1439,13 @@ public class EvalParser
                     //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand equals_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand equals_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand equals_dest = new Operand( aNode.tLoc );
+                    Operand equals_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao equalsObject = new Tao( Tao.Operation.EQUALS, equals_src1, equals_src2, equals_dest );
                     tacObjects.add( equalsObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand equals_goto = new Operand( aNode.fLoc );
+                    Operand equals_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao equalsGotoObject = new Tao( Tao.Operation.GOTO, equals_goto );
                     tacObjects.add( equalsGotoObject );
 
@@ -1433,13 +1470,13 @@ public class EvalParser
                     //printIdOrLoc( aNode.right ) + ", " + "trueLabel" + aNode.tLoc + "\n";
                     Operand not_equals_src1 = new Operand( printIdOrLoc( aNode.left ) );
                     Operand not_equals_src2 = new Operand( printIdOrLoc( aNode.right ) );
-                    Operand not_equals_dest = new Operand( aNode.tLoc );
+                    Operand not_equals_dest = new Operand( "truelabel" + aNode.tLoc );
                     Tao notEqualsObject = new Tao( Tao.Operation.NOTEQUALS, not_equals_src1, not_equals_src2, not_equals_dest );
                     tacObjects.add( notEqualsObject );
 
 
                     //threeAddress += "GOTO: falseLabel" + aNode.fLoc + "\n";
-                    Operand not_equals_goto = new Operand( aNode.fLoc );
+                    Operand not_equals_goto = new Operand( "falselabel" + aNode.fLoc );
                     Tao notEqualsGotoObject = new Tao( Tao.Operation.GOTO, not_equals_goto );
                     tacObjects.add( notEqualsGotoObject );
 
@@ -1460,15 +1497,15 @@ public class EvalParser
                     break;
                 case IF:
                     //threeAddress += "falseLabel" + aNode.fLoc + "\n";
-                    Operand if_dest = new Operand( aNode.fLoc );
+                    Operand if_dest = new Operand( "falselabel" + aNode.fLoc );
                     Tao ifObject = new Tao( Tao.Operation.IF, if_dest );
                     tacObjects.add( ifObject );
                     break;
                 case WHILE:
                     //threeAddress += "GOTO: repeatLabel" + aNode.rLoc + "\n" +
                     //"falseLabel" + aNode.fLoc + "\n";
-                    Operand while_src1 = new Operand( aNode.rLoc );
-                    Operand while_dest = new Operand( aNode.fLoc );
+                    Operand while_src1 = new Operand( "repeatlabel" + aNode.rLoc );
+                    Operand while_dest = new Operand( "falselabel" + aNode.fLoc );
                     Tao whileObject = new Tao( Tao.Operation.WHILE, while_src1, while_dest );
                     tacObjects.add( whileObject );
                     break;
