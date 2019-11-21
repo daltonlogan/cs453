@@ -2,7 +2,7 @@ public class Scanner
 {
     enum TokenType
     {
-        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, EQUALS, NOTEQUALS, ASSIGN, ID, INT, SEMICOLON, LEFTCURLY, RIGHTCURLY, IF, WHILE, AND, OR, VOID, PUBLIC, PRIVATE, CLASS, PROGRAM, INVALID
+        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, EQUALS, NOTEQUALS, ASSIGN, ID, INT, SEMICOLON, LEFTCURLY, RIGHTCURLY, IF, WHILE, AND, OR, VOID, PUBLIC, PRIVATE, CLASS, RETURN, PROGRAM, INVALID
     }
 
     class Token
@@ -106,6 +106,9 @@ public class Scanner
                     break;
                 case "class":
                     aType = TokenType.CLASS;
+                    break;
+                case "return":
+                    aType = TokenType.RETURN;
                     break;
                 default:
                     aType = TokenType.ID;
