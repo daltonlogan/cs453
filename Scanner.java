@@ -2,7 +2,7 @@ public class Scanner
 {
     enum TokenType
     {
-        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, EQUALS, NOTEQUALS, ASSIGN, ID, INT, SEMICOLON, LEFTCURLY, RIGHTCURLY, IF, WHILE, AND, OR, VOID, PUBLIC, PRIVATE, CLASS, RETURN, PROGRAM, INVALID
+        NUM, PLUS, MINUS, MUL, DIV, LT, LTE, GT, GTE, LEFTPAREN, RIGHTPAREN, EQUALS, NOTEQUALS, ASSIGN, ID, INT, SEMICOLON, LEFTCURLY, RIGHTCURLY, COMMA, IF, WHILE, AND, OR, VOID, PUBLIC, PRIVATE, CLASS, RETURN, PROGRAM, INVALID
     }
 
     class Token
@@ -132,6 +132,12 @@ public class Scanner
             stream.deleteCharAt( 0 );
             aValue = String.valueOf( aChar );
             aType = TokenType.RIGHTCURLY;
+        }
+        else if( aChar == ',' )
+        {
+            stream.deleteCharAt( 0 );
+            aValue = String.valueOf( aChar );
+            aType = TokenType.COMMA;
         }
         else if ( aChar == '+' )
         {

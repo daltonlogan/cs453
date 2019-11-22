@@ -8,7 +8,7 @@ public class AdvancedJavaTestNoGCC{
         AdvancedJava parser = new AdvancedJava();
         String fileName = "test.c";
 
-        eval = "public class test { int reserved; void mainEntry() { reserved = 0; } }";
+        eval = "public class test { int reserved; void mainEntry(int five) { five = 0; reserved = five; } }";
         parser.codeGen(eval, fileName);
 
         eval = "public class test { int reserved; void mainEntry() { reserved = 2 + 2; } }";

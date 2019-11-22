@@ -110,10 +110,42 @@ public class EvalParser
         return result;
     }
 
+    private void ret_type() throws Exception
+    {
+        Scanner.Token nextToken = lookahead();
+
+        if( nextToken.tokenType == Scanner.TokenType.VOID )
+        {
+            match( nextToken, Scanner.TokenType.VOID );
+        }
+        else
+        {
+            match( nextToken, Scanner.TokenType.INT );
+        }
+    }
+
+    private node ret() throws Exception
+    {
+        Scanner.Token nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.RETURN );
+        node result = boolCompare();
+
+        if( result == null )
+        {
+            return null;
+        }
+
+        nextToken = lookahead();
+        match( nextToken, Scanner.TokenType.SEMICOLON );
+        return result;
+    }
+
     private node func( ) throws Exception
     {
         Scanner.Token nextToken = lookahead();
-        match( nextToken, Scanner.TokenType.VOID );
+
+        ret_type();
+
         nextToken = lookahead();
         match( nextToken, Scanner.TokenType.ID );
 
@@ -136,10 +168,25 @@ public class EvalParser
         nextToken = lookahead();
         match( nextToken, Scanner.TokenType.LEFTPAREN );
         nextToken = lookahead();
+
+
+        node result = param_list();
+
+        node mid = new node();
+
+        nextToken = lookahead();
         match( nextToken, Scanner.TokenType.RIGHTPAREN );
         nextToken = lookahead();
         match( nextToken, Scanner.TokenType.LEFTCURLY );
-        node result = stmt_list();
+
+        node right = stmt_list();
+        //right.right = ret();
+        mid.left = result;
+        mid.right = right;
+        result = mid;
+
+
+        //node result = stmt_list();
 
         generateTACForFunc( result, false );
         ArrayList<Tao> newObjects = new ArrayList<>(  );
@@ -195,6 +242,58 @@ public class EvalParser
         node aNode = new node( Scanner.TokenType.ID, nextToken.tokenVal );
 
         return aNode;
+    }
+
+    private node param() throws Exception
+    {
+        Scanner.Token nextToken = lookahead();
+        if( nextToken.tokenType == Scanner.TokenType.INT )
+        {
+            match( nextToken, Scanner.TokenType.INT );
+            nextToken = lookahead();
+            if( nextToken.tokenType == Scanner.TokenType.ID )
+            {
+                match( nextToken, Scanner.TokenType.ID );
+                Symbol s = new Symbol();
+                s.setType( Symbol.SymbolType.INT );
+                localTable.add( nextToken.tokenVal , s );
+                return new node( Scanner.TokenType.ID, nextToken.tokenVal );
+            }
+        }
+
+        return null;
+    }
+
+    private node param_list( ) throws Exception
+    {
+        Scanner.Token nextToken = lookahead();
+
+        node aNode = param();
+
+        nextToken = lookahead();
+
+        if( nextToken.tokenType != Scanner.TokenType.COMMA )
+        {
+            return aNode;
+        }
+
+        //match( nextToken, Scanner.TokenType.COMMA );
+
+        node par = aNode;
+        node result = new node();
+
+        while (par != null)
+        {
+            result.stmts.add( par );
+            nextToken = lookahead();
+            if( nextToken.tokenType != Scanner.TokenType.COMMA )
+            {
+                break;
+            }
+            match( nextToken, Scanner.TokenType.COMMA );
+            par = param();
+        }
+        return result;
     }
 
     private node stmt_list( ) throws Exception
@@ -724,6 +823,15 @@ public class EvalParser
                     }
                 }
 
+//                nextToken = lookahead();
+//                if( nextToken.tokenType == Scanner.TokenType.LEFTPAREN )
+//                {
+//                    match( nextToken, Scanner.TokenType.LEFTPAREN );
+//                    nextToken = lookahead();
+//                    node a = arg_list();
+//                    match( nextToken, Scanner.TokenType.RIGHTPAREN );
+//                }
+
                 aNode = new node( Scanner.TokenType.ID, nextToken.tokenVal );
                 return aNode;
             }
@@ -739,6 +847,31 @@ public class EvalParser
             System.exit( -1 );
         }
         return null;
+    }
+
+    private node arg() throws Exception
+    {
+        return boolCompare();
+    }
+
+    private node arg_list() throws Exception
+    {
+        Scanner.Token nextToken = lookahead();
+
+        if( nextToken.tokenType != Scanner.TokenType.COMMA )
+        {
+            return null;
+        }
+
+        match( nextToken, Scanner.TokenType.COMMA );
+        node result = new node();
+        node arg = arg();
+        while ( arg != null )
+        {
+            result.stmts.add( arg );
+            arg = arg();
+        }
+        return result;
     }
 
     /****************************************/
