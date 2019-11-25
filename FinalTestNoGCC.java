@@ -8,20 +8,20 @@ public class FinalTestNoGCC{
         AdvancedJava parser = new AdvancedJava();
         String fileName = "test.c";
 
-        eval = "public class test { int reserved; void mainEntry(int five) { five = 0; reserved = five; } }";
+        eval = "public class test { int reserved; void main() {} void mainEntry(int five) { five = 0; reserved = five; main() } }";
         parser.codeGen(eval, fileName);
 
-        eval = "public class test { int reserved; void mainEntry( int a, int b ) { a = 5; b = 1; reserved = a + b; } }";
-        parser.codeGen(eval, fileName);
-
-        eval = "public class test { int reserved; void mainEntry( int a, int b, int c ) { a = 3; b = 2; c = a * b; reserved = a + b + c; } }";
-        parser.codeGen(eval, fileName);
-
-        eval = "public class test { int reserved; int glob; void mainEntry( int a, int b, int c, int d ) { reserved = 1; glob = 2; b = 4; c = b; d = b + glob; a = c * d + reserved; reserved = glob + reserved + a; } }";
-        parser.codeGen(eval, fileName);
-
-        eval = "public class test { int reserved; void mainEntry( int b ) { b = 5; reserved = b; } }";
-        parser.codeGen(eval, fileName);
+//        eval = "public class test { int reserved; void mainEntry( int a, int b ) { a = 5; b = 1; reserved = a + b; } }";
+//        parser.codeGen(eval, fileName);
+//
+//        eval = "public class test { int reserved; void mainEntry( int a, int b, int c ) { a = 3; b = 2; c = a * b; reserved = a + b + c; } }";
+//        parser.codeGen(eval, fileName);
+//
+//        eval = "public class test { int reserved; int glob; void mainEntry( int a, int b, int c, int d ) { reserved = 1; glob = 2; b = 4; c = b; d = b + glob; a = c * d + reserved; reserved = glob + reserved + a; } }";
+//        parser.codeGen(eval, fileName);
+//
+//        eval = "public class test { int reserved; void mainEntry( int b ) { b = 5; reserved = b; } }";
+//        parser.codeGen(eval, fileName);
 //
 //        eval = "private class test { int reserved; void hey(){} int glob; void hey2(){} void mainEntry() { glob = 2; reserved = 42; reserved = reserved * (glob - 0); } }";
 //        parser.codeGen(eval, fileName);

@@ -823,16 +823,18 @@ public class EvalParser
                     }
                 }
 
-//                nextToken = lookahead();
-//                if( nextToken.tokenType == Scanner.TokenType.LEFTPAREN )
-//                {
-//                    match( nextToken, Scanner.TokenType.LEFTPAREN );
-//                    nextToken = lookahead();
-//                    node a = arg_list();
-//                    match( nextToken, Scanner.TokenType.RIGHTPAREN );
-//                }
-
                 aNode = new node( Scanner.TokenType.ID, nextToken.tokenVal );
+
+                nextToken = lookahead();
+                if( nextToken.tokenType == Scanner.TokenType.LEFTPAREN )
+                {
+                    match( nextToken, Scanner.TokenType.LEFTPAREN );
+                    nextToken = lookahead();
+                    node a = arg_list();
+                    match( nextToken, Scanner.TokenType.RIGHTPAREN );
+                    aNode = new node( Scanner.TokenType.ID, nextToken.tokenVal );
+                }
+
                 return aNode;
             }
 
