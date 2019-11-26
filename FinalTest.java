@@ -1082,6 +1082,75 @@ public class FinalTest{
             System.out.println("Passed test  25");
         }*/
 
+        System.out.println();
+        fileName = "test_26.c";
+
+        eval = "public class test { int x; int y; int reserved; void f(int val) {reserved = 3;} void mainEntry() { reserved = 0; }}";
+        parser.codeGen(eval, fileName);
+
+        /* Run Shell command */
+        cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
+        cmdProc.waitFor();
+        consume(cmdProc);
+        cmdProc = Runtime.getRuntime().exec("./test");
+        cmdProc.waitFor();
+        consume(cmdProc);
+        retValue = cmdProc.exitValue();
+        if( retValue != 0 )
+        {
+            System.out.println( "FAIL\nExpected: 0\nActual: " + retValue );
+        }
+        else
+        {
+            System.out.println("Passed test  26");
+        }
+
+        System.out.println();
+        fileName = "test_27.c";
+
+        eval = "public class test { int x; int y; int reserved; void f(int val, int valTwo) {reserved = 3;} void mainEntry() { reserved = 0; }}";
+        parser.codeGen(eval, fileName);
+
+        /* Run Shell command */
+        cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
+        cmdProc.waitFor();
+        consume(cmdProc);
+        cmdProc = Runtime.getRuntime().exec("./test");
+        cmdProc.waitFor();
+        consume(cmdProc);
+        retValue = cmdProc.exitValue();
+        if( retValue != 0 )
+        {
+            System.out.println( "FAIL\nExpected: 0\nActual: " + retValue );
+        }
+        else
+        {
+            System.out.println("Passed test  27");
+        }
+/*
+        System.out.println();
+        fileName = "test_28.c";
+
+        eval = "public class test { int x; int y; int reserved; int f() {return 3;} void mainEntry() { reserved = 0; }}";
+        parser.codeGen(eval, fileName);
+
+        /* Run Shell command *//*
+        cmdProc = Runtime.getRuntime().exec("gcc -g -Wall " + fileName + " -o test");
+        cmdProc.waitFor();
+        consume(cmdProc);
+        cmdProc = Runtime.getRuntime().exec("./test");
+        cmdProc.waitFor();
+        consume(cmdProc);
+        retValue = cmdProc.exitValue();
+        if( retValue != 0 )
+        {
+            System.out.println( "FAIL\nExpected: 0\nActual: " + retValue );
+        }
+        else
+        {
+            System.out.println("Passed test  28");
+        }*/
+
     }
 
     public static void TestObjectCreation()
